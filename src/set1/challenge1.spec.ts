@@ -111,6 +111,80 @@ describe("Challenge 1", () => {
         it('Should throw an error trying to retrieve invalid word.', () => {
             expect(() => bitArray.getWord(0, 8)).toThrow(Error); // TEST
         });
+
+        it('Should convert BitArray to Buffer', () => {
+            // should be 'hello'
+            const buffer = Buffer.from([104, 101, 108, 108, 111]);
+            const bitArray = BitArray.fromBuffer(buffer);
+
+            const result = BitArray.toBuffer(bitArray); // TEST
+
+            expect(result).toEqual(buffer);
+        });
+
+        it('Should convert BitArray to Buffer - number of bits not divisble by 8', () => {
+            const bitArray = new BitArray(11);
+            // 0000 1111 || 010|0 0000
+            bitArray.setBit(4);
+            bitArray.setBit(5);
+            bitArray.setBit(6);
+            bitArray.setBit(7);
+            bitArray.setBit(9);
+
+            const result = BitArray.toBuffer(bitArray); // TEST
+
+            expect(result.length).toEqual(2);
+            expect(result[0]).toEqual(15);
+            expect(result[1]).toEqual(2);
+        });
+
+        it('Should convert Buffer to BitArray', () => {
+            // should be 'hello'
+            const buffer = Buffer.from([104, 101, 108, 108, 111]);
+
+            const result = BitArray.fromBuffer(buffer); // TEST
+
+            expect(result.getWord(0, 7)).toEqual(buffer[0]);
+            expect(result.getWord(8, 15)).toEqual(buffer[1]);
+            expect(result.getWord(16, 23)).toEqual(buffer[2]);
+            expect(result.getWord(24, 31)).toEqual(buffer[3]);
+            expect(result.getWord(32, 39)).toEqual(buffer[4]);
+        });
+
+        it('Should convert hex string to BitArray', () => {
+            const result = BitArray.fromHexString("1234abcd"); // TEST
+
+            expect(result.length).toEqual(32);
+            // 0001 0010
+            expect(result.getWord(0, 7)).toEqual(18);
+            // 0011 0100
+            expect(result.getWord(8, 15)).toEqual(52);
+            // 1010 1011
+            expect(result.getWord(16, 23)).toEqual(171);
+            // 1010 1100
+            expect(result.getWord(24, 31)).toEqual(205);
+        });
+
+        it('Should convert BitArray to hex string', () => {
+            const expected = "1234abcd";
+
+            const test = BitArray.fromHexString(expected);
+            const result = BitArray.toHexString(test); // TEST
+
+            expect(result).toEqual(expected);
+        });
+
+        it('Should fill with byte 0x01', () => {
+            const byte = 0x01;
+
+            const bitArray = new BitArray(32);
+            bitArray.fillWithByte(byte); // TEST
+
+            expect(bitArray.getWord(0, 7)).toEqual(byte);
+            expect(bitArray.getWord(8, 15)).toEqual(byte);
+            expect(bitArray.getWord(16, 23)).toEqual(byte);
+            expect(bitArray.getWord(24, 31)).toEqual(byte);
+        });
     });
 
     describe('Base64 conversion',  () => {

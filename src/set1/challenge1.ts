@@ -4,6 +4,11 @@ const base64Table = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
 
 export interface BitArrayConstructor {
     new(nrOfBits: number): BitArray;
+
+    fromHexString(hexString: string): BitArray;
+    toHexString(bitArray: BitArray): string;
+    fromBuffer(buffer: Buffer): BitArray;
+    toBuffer(bitArray: BitArray): Buffer;
 }
 
 export interface BitArray {
@@ -12,6 +17,7 @@ export interface BitArray {
     setBit(idx: number): void;
     clearBit(idx: number): void;
     getBit(idx: number): 0 | 1;
+    fillWithByte(byte: number): void;
     getWord(start: number, end: number): number;
 }
 
@@ -22,6 +28,71 @@ export class Uint8BitArray implements BitArray {
     constructor(nrOfBits: number) {
         this.length = nrOfBits;
         this.bitArray = new Uint8Array(Math.ceil(nrOfBits / 8));
+    }
+
+    static fromBuffer(buffer: Buffer): BitArray {
+        const bitArray = new Uint8BitArray(buffer.length * 8);
+        let byteIdx = 0;
+        buffer.forEach(charCode => {
+           bitArray.bitArray[byteIdx++] = charCode;
+        });
+        return bitArray;
+    }
+
+    static toBuffer(bitArray: BitArray): Buffer {
+        const buffer = Buffer.alloc(Math.ceil(bitArray.length / 8));
+        let byteIdx = 0;
+        for (let bitIdx = 0; bitIdx < bitArray.length; bitIdx += 8) {
+            const wordEnd = (bitIdx + 7) >= bitArray.length ? bitArray.length - 1 : bitIdx + 7;
+            buffer[byteIdx++] = bitArray.getWord(bitIdx, wordEnd);
+        }
+        return buffer;
+    }
+
+    static fromHexString(hexString: string): BitArray {
+        if (!Uint8BitArray.isHexString(hexString)) {
+            throw Error(`Input not in hexadecimal format.`);
+        }
+        const bitArray = new Uint8BitArray(hexString.length * 4);
+        let curChr;
+        for (let chrIdx = 0; chrIdx < hexString.length; chrIdx++) {
+            curChr = parseInt(hexString[chrIdx], 16);
+            // convert hex digit to four bits
+            for (let i = 0; i < 4; i++) {
+                const mask = 1 << (3 - i);
+                if ((curChr & mask) !== 0) bitArray.setBit(4 * chrIdx + i);
+            }
+        }
+        return bitArray;
+    }
+
+    static toHexString(bitArray: BitArray): string {
+        let hexString = "";
+        for (let idx = 0; idx < bitArray.length; idx += 4) {
+            const endIdx = (idx + 3) >= bitArray.length ? bitArray.length - 1 : idx + 3;
+            const quartet = bitArray.getWord(idx, endIdx);
+            hexString += quartet.toString(16);
+        }
+        return hexString;
+    }
+
+    private static isHexString(input: string): boolean {
+        if (input.length % 2 != 0) {
+            return false;
+        }
+        let containsOnlyHexChars = true;
+        let curByte;
+        for (let chrIdx = 0; chrIdx < input.length; chrIdx++) {
+            curByte = input.charCodeAt(chrIdx);
+            // input only contains 0...9 or A...F or a...f
+            if (!(0x30 <= curByte && curByte <= 0x39) &&
+                !(0x41 <= curByte && curByte <= 0x46) &&
+                !(0x61 <= curByte && curByte <=  0x66)) {
+                containsOnlyHexChars = false;
+                break;
+            }
+        }
+        return containsOnlyHexChars;
     }
 
     checkIdxInBounds(idx: number): void {
@@ -53,6 +124,10 @@ export class Uint8BitArray implements BitArray {
         this.bitArray[bitIdx] &= ~mask;
     }
 
+    fillWithByte(byte: number): void {
+        this.bitArray.fill(byte);
+    }
+
     getWord(start: number, end: number): number {
         if ((end - start) >= 8 || (end <= start)) {
             throw Error(`Invalid indices`);
@@ -80,39 +155,6 @@ export class Uint8BitArray implements BitArray {
 
 export const BitArray: BitArrayConstructor = Uint8BitArray;
 
-function isHexString(input: string): boolean {
-    if (input.length % 2 != 0) {
-        return false;
-    }
-    let containsOnlyHexChars = true;
-    let curByte;
-    for (let chrIdx = 0; chrIdx < input.length; chrIdx++) {
-        curByte = input.charCodeAt(chrIdx);
-        // input only contains 0...9 or A...F or a...f
-        if (!(0x30 <= curByte && curByte <= 0x39) &&
-            !(0x41 <= curByte && curByte <= 0x46) &&
-            !(0x61 <= curByte && curByte <=  0x66)) {
-            containsOnlyHexChars = false;
-            break;
-        }
-    }
-    return containsOnlyHexChars;
-}
-
-function hexStringToBitArray(hexInput: string): BitArray {
-    const bin = new BitArray(hexInput.length * 4);
-    let curChr;
-    for (let chrIdx = 0; chrIdx < hexInput.length; chrIdx++) {
-        curChr = parseInt(hexInput[chrIdx], 16);
-        // convert hex digit to four bits
-        for (let i = 0; i < 4; i++) {
-            const mask = 1 << (3 - i);
-            if ((curChr & mask) !== 0) bin.setBit(4 * chrIdx + i);
-        }
-    }
-    return bin;
-}
-
 function bitArrayToBase64(bitArray: BitArray): Buffer {
     // output array - use Buffer because of easier conversion to string
     // ratio of output bytes to input bytes 4 : 3
@@ -129,13 +171,9 @@ function bitArrayToBase64(bitArray: BitArray): Buffer {
 
 /**
  * Convert hex string to base64
- * @param input hex string
+ * @param hexInput hex string
  */
-export function hex2Base64(input: string): string {
-    if (!isHexString(input)) {
-        throw Error(`Input not in hexadecimal format`);
-    }
-    const bitArray = hexStringToBitArray(input);
-    const output = bitArrayToBase64(bitArray);
+export function hex2Base64(hexInput: string): string {
+    const output = bitArrayToBase64(BitArray.fromHexString(hexInput));
     return output.toString();
 }
