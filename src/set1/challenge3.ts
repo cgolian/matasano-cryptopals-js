@@ -1,5 +1,5 @@
 import {BitArray} from "./challenge1";
-import {xorBitArrays} from "./challenge2";
+import {XORBitArrays} from "./challenge2";
 
 interface AsciiFrequencyTable {
     [key: string]: number;
@@ -68,7 +68,7 @@ function computeFrequencyScore(plaintext: BitArray): number {
     return score;
 }
 
-export interface SingleByteXorDecryptionResult {
+export interface SingleByteXORDecryptionResult {
     plaintext: Buffer;
     keyByte: number;
     score: number;
@@ -78,7 +78,7 @@ export interface SingleByteXorDecryptionResult {
  * Decrypt hexadecimal ciphertext encrypted with XOR using single byte key
  * @param hexCiphertext string in hexadecimal format
  */
-export function breakSingleByteXor(hexCiphertext: string): SingleByteXorDecryptionResult {
+export function breakSingleByteXOR(hexCiphertext: string): SingleByteXORDecryptionResult {
     const inputBitArray = BitArray.fromHexString(hexCiphertext);
     let currentPlaintext, currentScore, result, keyByte, bestScore = Number.MAX_SAFE_INTEGER;
     const keyLength = hexCiphertext.length / 2;
@@ -87,7 +87,7 @@ export function breakSingleByteXor(hexCiphertext: string): SingleByteXorDecrypti
     const singleByteKeyBitArray = BitArray.fromHexString(singleByteKey);
     for (let idx = 0; idx < 256; idx++) {
         singleByteKeyBitArray.fillWithByte(idx);
-        currentPlaintext = xorBitArrays(singleByteKeyBitArray, inputBitArray);
+        currentPlaintext = XORBitArrays(singleByteKeyBitArray, inputBitArray);
         currentScore = computeFrequencyScore(currentPlaintext);
         if (currentScore < bestScore) {
             keyByte = idx;

@@ -1,6 +1,6 @@
 import {BitArray} from "./challenge1";
 
-export function xorBitArrays(input1: BitArray, input2: BitArray): BitArray {
+export function XORBitArrays(input1: BitArray, input2: BitArray): BitArray {
     if ((input1.length != input2.length)) {
         throw Error(`Length differs.`);
     }
@@ -17,7 +17,7 @@ export function xorBitArrays(input1: BitArray, input2: BitArray): BitArray {
  * @param hexInput1 string in hexadecimal format
  * @param hexInput2 string in hexadecimal format
  */
-export function xorHexStrings(hexInput1: string, hexInput2: string): string {
-    const bitResult = xorBitArrays(BitArray.fromHexString(hexInput1), BitArray.fromHexString(hexInput2));
+export function XORHexStrings(hexInput1: string, hexInput2: string): string {
+    const bitResult = XORBitArrays(BitArray.fromHexString(hexInput1), BitArray.fromHexString(hexInput2));
     return BitArray.toHexString(bitResult);
 }
