@@ -70,6 +70,10 @@ export function transposeBlocks(blocks: Buffer[], transposedCount: number): Buff
     return transposedBlocks;
 }
 
+/**
+ * Decrypt ciphertext encrypted by XORing plaintext with repeating key
+ * @param ciphertext ciphertext
+ */
 export function decryptRepeatingKeyXOR(ciphertext: Buffer): Buffer {
     const keysizes = calculatePotentialKeysizes(ciphertext);
     const firstKeysize = keysizes[0].keysize;
