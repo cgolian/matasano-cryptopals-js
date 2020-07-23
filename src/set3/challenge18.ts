@@ -1,7 +1,7 @@
-import {splitIntoBlocks} from "../set1/challenge6";
-import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
-import {BitArray} from "../set1/challenge1";
-import {XORBitArrays} from "../set1/challenge2";
+import {splitIntoBlocks} from '../set1/challenge6';
+import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {BitArray} from '../set1/challenge1';
+import {XORBitArrays} from '../set1/challenge2';
 
 export enum NonceType {
     LITTLE_ENDIAN_UNSIGNED
@@ -27,7 +27,7 @@ function applyAes128CtrCounterLENonceLE(
 
     const nonceWithCounter = Buffer.alloc(AES_128_BLOCK_LENGTH_BYTES);
     // fill with LE nonce
-    nonceWithCounter.fill(nonce.reverse());
+    nonce.copy(nonceWithCounter, 0, format.nonce.size);
 
     let counterValue = 0;
     const blocks = splitIntoBlocks(text, AES_128_BLOCK_LENGTH_BYTES);

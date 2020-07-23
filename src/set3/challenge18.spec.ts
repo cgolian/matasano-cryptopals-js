@@ -1,7 +1,7 @@
-import {aes128CtrDecrypt, aes128CtrEncrypt} from "./challenge18";
-import {AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
+import {aes128CtrDecrypt, aes128CtrEncrypt} from './challenge18';
+import {AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
 
-describe("Challenge 18", () => {
+describe('Challenge 18', () => {
     let plaintext: Buffer;
     let ciphertext: Buffer;
     let key: Buffer;

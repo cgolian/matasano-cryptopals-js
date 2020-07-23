@@ -4,11 +4,11 @@ import {
     splitTextIntoBlocks, substituteBytes,
     validateKeyLength,
     validateTextLength
-} from "./challenge7";
-import {BitArray, Uint8BitArray} from "./challenge1";
-import * as fs from "fs";
+} from './challenge7';
+import {BitArray, Uint8BitArray} from './challenge1';
+import * as fs from 'fs';
 
-describe("Challenge 7", () => {
+describe('Challenge 7', () => {
     describe('Validation functions', () => {
         it('should validate key 16 bytes long', () => {
             const key = Buffer.from('0000111122223333');
@@ -86,7 +86,7 @@ describe("Challenge 7", () => {
         });
 
         it('should substitute bytes', () => {
-            const block = BitArray.fromHexString("3242F4AB8C5F368A393892A9EC3A093B");
+            const block = BitArray.fromHexString('3242F4AB8C5F368A393892A9EC3A093B');
 
             const result = substituteBytes(block); // TEST
 
@@ -95,7 +95,7 @@ describe("Challenge 7", () => {
         });
 
         it('should shift rows', () => {
-            const block = BitArray.fromHexString("232CBF6264CF057E12074FD3CE8001E2");
+            const block = BitArray.fromHexString('232CBF6264CF057E12074FD3CE8001E2');
 
             const result = shiftRows(block); // TEST
 
@@ -104,7 +104,7 @@ describe("Challenge 7", () => {
         });
 
         it('should mix columns', () => {
-            const block = BitArray.fromHexString("23CF4FE2640701621280BF7ECE2C05D3");
+            const block = BitArray.fromHexString('23CF4FE2640701621280BF7ECE2C05D3');
 
             const result = mixColumns(block); // TEST
 
@@ -128,7 +128,7 @@ describe("Challenge 7", () => {
 
     describe('Decryption - helper functions', () => {
        it('should shift rows', () => {
-           const block = BitArray.fromHexString("F533CC4755C0E74D4FB7F8EF99B145B2");
+           const block = BitArray.fromHexString('F533CC4755C0E74D4FB7F8EF99B145B2');
 
            const result = invShiftRows(block); // TEST
 
@@ -136,7 +136,7 @@ describe("Challenge 7", () => {
        });
 
         it('should mix columns', () => {
-            const block = BitArray.fromHexString("2F9B8C755BB197424BC6395B169D6F3B");
+            const block = BitArray.fromHexString('2F9B8C755BB197424BC6395B169D6F3B');
 
             const result = invMixColumns(block); // TEST
 
@@ -144,7 +144,7 @@ describe("Challenge 7", () => {
         });
 
         it('should substitute bytes', () => {
-            const block = BitArray.fromHexString("F5B1F84D553345EF4FC0CCB299B7E747");
+            const block = BitArray.fromHexString('F5B1F84D553345EF4FC0CCB299B7E747');
 
             const result = invSubstituteBytes(block); // TEST
 
@@ -190,13 +190,13 @@ describe("Challenge 7", () => {
 
     describe('Decrypt text in file', () => {
         it('should decrypt file content', () => {
-            const fileContents = fs.readFileSync("./src/set1/7.txt", "utf8");
-            const ciphertext = Buffer.from(fileContents, "base64");
+            const fileContents = fs.readFileSync('./src/set1/7.txt', 'utf8');
+            const ciphertext = Buffer.from(fileContents, 'base64');
             const key = Buffer.from('YELLOW SUBMARINE');
 
             const plaintext = aes128EcbDecrypt(ciphertext, key); // TEST
 
-            expect(plaintext.includes("Play that funky music")).toBe(true);
+            expect(plaintext.includes('Play that funky music')).toBe(true);
         });
     });
 });

@@ -1,8 +1,8 @@
-import {createEncryptionFunctionAndPaddingOraclePair, paddingOracleDecryptCBCCiphertext} from "./challenge17";
+import {createEncryptionFunctionAndPaddingOraclePair, paddingOracleDecryptCBCCiphertext} from './challenge17';
 
-describe("Challenge 17", () => {
-    describe("Helper functions", () => {
-        describe("cbcPaddingOracle", () => {
+describe('Challenge 17', () => {
+    describe('Helper functions', () => {
+        describe('cbcPaddingOracle', () => {
             let cbcEncryptionOracle: () => { ciphertext: Buffer; iv: Buffer };
             let cbcPaddingOracle: (ciphertext: Buffer) => boolean;
 
@@ -19,7 +19,7 @@ describe("Challenge 17", () => {
         });
     });
 
-    xdescribe("CBC ciphertext decryption", () => {
+    xdescribe('CBC ciphertext decryption', () => {
         let cbcEncryptionOracle: () => { ciphertext: Buffer; iv: Buffer };
         let cbcPaddingOracle: (ciphertext: Buffer) => boolean;
 

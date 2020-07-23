@@ -1,4 +1,4 @@
-import {stripPKCS7} from "./challenge9";
+import {stripPKCS7} from './challenge9';
 
 export function unpadBlockPKCS7(plaintext: Buffer, blockLength: number): Buffer {
     let validationFailed = false;

@@ -1,7 +1,7 @@
-import {cbcFlipBits, encryptData, isAdmin} from "./challenge16";
+import {cbcFlipBits, encryptData, isAdmin} from './challenge16';
 
-describe("Challenge 16", () => {
-    describe("CBC flip bits attack", () => {
+describe('Challenge 16', () => {
+    describe('CBC flip bits attack', () => {
        let encryptionFn: (userInput: string) => Buffer;
        let validationFn: (ciphertext: Buffer) => boolean;
 

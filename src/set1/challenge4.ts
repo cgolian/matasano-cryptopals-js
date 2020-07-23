@@ -1,4 +1,4 @@
-import {breakSingleByteXOR, SingleByteXORDecryptionResult} from "./challenge3";
+import {breakSingleByteXOR, SingleByteXORDecryptionResult} from './challenge3';
 
 /**
  * Detect & decrypt ciphertext encrypted with single byte XOR
@@ -8,7 +8,7 @@ export function detectSingleByteXOREncryptedString(ciphertexts: string[]): {
     encryptedString: string;
     decryptionInfo: SingleByteXORDecryptionResult;
 } {
-    let encryptedString = "";
+    let encryptedString = '';
     let result: SingleByteXORDecryptionResult = {
         score: Number.MAX_SAFE_INTEGER,
         keyByte: 0x00,

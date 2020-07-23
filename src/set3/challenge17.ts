@@ -1,9 +1,9 @@
-import * as crypto from "crypto";
-import {AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
-import {unpadBlockPKCS7} from "../set2/challenge15";
-import {aes128CbcDecrypt, aes128CbcEncrypt} from "../set2/challenge10";
-import {padBlockPKCS7} from "../set2/challenge9";
-import {splitIntoBlocks} from "../set1/challenge6";
+import * as crypto from 'crypto';
+import {AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {unpadBlockPKCS7} from '../set2/challenge15';
+import {aes128CbcDecrypt, aes128CbcEncrypt} from '../set2/challenge10';
+import {padBlockPKCS7} from '../set2/challenge9';
+import {splitIntoBlocks} from '../set1/challenge6';
 
 type EncryptionOracleCBC = () => { ciphertext: Buffer; iv: Buffer };
 type PaddingOracleCBC = (ciphertext: Buffer) => boolean;
@@ -15,16 +15,16 @@ type EncryptionFunctionPaddingOraclePair = {
 
 export function createEncryptionFunctionAndPaddingOraclePair(): EncryptionFunctionPaddingOraclePair {
     const possiblePlaintexts = [
-        "MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=",
-        "MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=",
-        "MDAwMDAyUXVpY2sgdG8gdGhlIHBvaW50LCB0byB0aGUgcG9pbnQsIG5vIGZha2luZw==",
-        "MDAwMDAzQ29va2luZyBNQydzIGxpa2UgYSBwb3VuZCBvZiBiYWNvbg==",
-        "MDAwMDA0QnVybmluZyAnZW0sIGlmIHlvdSBhaW4ndCBxdWljayBhbmQgbmltYmxl",
-        "MDAwMDA1SSBnbyBjcmF6eSB3aGVuIEkgaGVhciBhIGN5bWJhbA==",
-        "MDAwMDA2QW5kIGEgaGlnaCBoYXQgd2l0aCBhIHNvdXBlZCB1cCB0ZW1wbw==",
-        "MDAwMDA3SSdtIG9uIGEgcm9sbCwgaXQncyB0aW1lIHRvIGdvIHNvbG8=",
-        "MDAwMDA4b2xsaW4nIGluIG15IGZpdmUgcG9pbnQgb2g=",
-        "MDAwMDA5aXRoIG15IHJhZy10b3AgZG93biBzbyBteSBoYWlyIGNhbiBibG93"
+        'MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=',
+        'MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=',
+        'MDAwMDAyUXVpY2sgdG8gdGhlIHBvaW50LCB0byB0aGUgcG9pbnQsIG5vIGZha2luZw==',
+        'MDAwMDAzQ29va2luZyBNQydzIGxpa2UgYSBwb3VuZCBvZiBiYWNvbg==',
+        'MDAwMDA0QnVybmluZyAnZW0sIGlmIHlvdSBhaW4ndCBxdWljayBhbmQgbmltYmxl',
+        'MDAwMDA1SSBnbyBjcmF6eSB3aGVuIEkgaGVhciBhIGN5bWJhbA==',
+        'MDAwMDA2QW5kIGEgaGlnaCBoYXQgd2l0aCBhIHNvdXBlZCB1cCB0ZW1wbw==',
+        'MDAwMDA3SSdtIG9uIGEgcm9sbCwgaXQncyB0aW1lIHRvIGdvIHNvbG8=',
+        'MDAwMDA4b2xsaW4nIGluIG15IGZpdmUgcG9pbnQgb2g=',
+        'MDAwMDA5aXRoIG15IHJhZy10b3AgZG93biBzbyBteSBoYWlyIGNhbiBibG93'
     ];
     const randomAESKey = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
     const randomIV = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
@@ -37,7 +37,7 @@ export function createEncryptionFunctionAndPaddingOraclePair(): EncryptionFuncti
         iv: Buffer;
     } {
         const plaintextNr = Math.ceil(Math.random() * 9);
-        const selectedPlaintext = Buffer.from(possiblePlaintexts[plaintextNr], "base64");
+        const selectedPlaintext = Buffer.from(possiblePlaintexts[plaintextNr], 'base64');
         const paddedPlaintext = padBlockPKCS7(selectedPlaintext, AES_128_BLOCK_LENGTH_BYTES);
         const ciphertext = aes128CbcEncrypt(paddedPlaintext, randomIV, randomAESKey);
         return { ciphertext, iv: randomIV };
@@ -89,7 +89,7 @@ function paddingOracleDecryptLastCBCCiphertextBlock(
     const decrypted = Buffer.alloc(AES_128_BLOCK_LENGTH_BYTES);
     if (paddingOracleCBC(oracleInput)) {
         let paddingByte;
-        // find the "padding" byte
+        // find the 'padding' byte
         for (let i = AES_128_BLOCK_LENGTH_BYTES - 2; i >= 0; i--) {
             oracleInput[i] = 0xFF;
             const result = paddingOracleCBC(oracleInput);

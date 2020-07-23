@@ -1,6 +1,6 @@
-import {AESEncryptionOracle} from "./challenge11";
-import {padBlockPKCS7} from "./challenge9";
-import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
+import {AESEncryptionOracle} from './challenge11';
+import {padBlockPKCS7} from './challenge9';
+import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
 
 export type ConsistentKeyEncryptionOracle = (plaintext: Buffer) => Buffer;
 
@@ -91,7 +91,7 @@ export function decryptConsistentKeyEncryptionOracle(
     const plaintext = Buffer.alloc(ciphertext.length);
     let dictionary;
     const craftedInputs = [];
-    // craft "short" inputs
+    // craft 'short' inputs
     for (let i = 1; i <= AES_128_BLOCK_LENGTH_BYTES; i++) {
         craftedInputs.push(Buffer.alloc(AES_128_BLOCK_LENGTH_BYTES - i, INPUT_PLACEHOLDER));
     }

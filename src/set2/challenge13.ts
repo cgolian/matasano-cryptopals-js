@@ -1,14 +1,14 @@
-import * as crypto from "crypto";
-import {aes128EcbDecrypt, aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
-import {padBlockPKCS7, stripPKCS7} from "./challenge9";
+import * as crypto from 'crypto';
+import {aes128EcbDecrypt, aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {padBlockPKCS7, stripPKCS7} from './challenge9';
 
 const staticKey = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
 
 export function parseKVString(kvString: string): object {
-    const pairs = kvString.split("&");
+    const pairs = kvString.split('&');
     const result: {[key: string]: string} = {};
     pairs.forEach((pair: string) => {
-        const keyValue = pair.split("=");
+        const keyValue = pair.split('=');
         if (keyValue[0] && keyValue[1]) {
             result[keyValue[0]] = keyValue[1];
         }
@@ -22,10 +22,10 @@ export function encodeUserProfile(emailAddress: string): string {
     const userProfile = {
         email: sanitizedEmailAddress,
         uid: 10,
-        role: "user"
+        role: 'user'
     };
-    if (emailAddress === "admin@mywebsite.com") {
-        userProfile.role = "admin";
+    if (emailAddress === 'admin@mywebsite.com') {
+        userProfile.role = 'admin';
         userProfile.uid = 1;
     }
     return `email=${userProfile.email}&uid=${userProfile.uid}&role=${

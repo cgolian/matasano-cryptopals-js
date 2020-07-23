@@ -1,5 +1,5 @@
-import {BitArray} from "./challenge1";
-import {XORBitArrays} from "./challenge2";
+import {BitArray} from './challenge1';
+import {XORBitArrays} from './challenge2';
 
 interface AsciiFrequencyTable {
     [key: string]: number;
@@ -83,7 +83,7 @@ export function breakSingleByteXOR(hexCiphertext: string): SingleByteXORDecrypti
     let currentPlaintext, currentScore, result, keyByte, bestScore = Number.MAX_SAFE_INTEGER;
     const keyLength = hexCiphertext.length / 2;
     // initialize key array
-    const singleByteKey = "00".repeat(keyLength);
+    const singleByteKey = '00'.repeat(keyLength);
     const singleByteKeyBitArray = BitArray.fromHexString(singleByteKey);
     for (let idx = 0; idx < 256; idx++) {
         singleByteKeyBitArray.fillWithByte(idx);

@@ -2,11 +2,11 @@ import {
     consistentKeyRandomPrefixEncryptionOracle, decryptConsistentKeyRandomPrefixEncryptionOracle,
     initOracleWithoutRandomPrefix,
     isolateRandomBytes
-} from "./challenge14";
+} from './challenge14';
 import {
     consistentKeyEncryptionOracle,
     ConsistentKeyEncryptionOracle
-} from "./challenge12";
+} from './challenge12';
 
 jest.mock('./challenge11', () => ({
     AESEncryptionOracle: class {
@@ -17,8 +17,8 @@ jest.mock('./challenge11', () => ({
 }));
 
 
-describe("Challenge 14", () => {
-    describe("Helper functions", () => {
+describe('Challenge 14', () => {
+    describe('Helper functions', () => {
         let mockedEncryptionOracle: ConsistentKeyEncryptionOracle;
         const randomPrefix = Buffer.from('randomprefix');
         const targetBytes = Buffer.from('targetbytes');
@@ -28,13 +28,13 @@ describe("Challenge 14", () => {
                 Buffer.concat([randomPrefix, plaintext, targetBytes]);
         });
 
-        describe("isolateRandomBytes", () => {
+        describe('isolateRandomBytes', () => {
             it('should isolate random bytes', () => {
                 expect(isolateRandomBytes(mockedEncryptionOracle)).toEqual(Buffer.from([0x0, 0x0, 0x0, 0x0])); // TEST
             });
         });
 
-        describe("initOracleWithoutRandomPrefix", () => {
+        describe('initOracleWithoutRandomPrefix', () => {
             let encryptionOracle: ConsistentKeyEncryptionOracle;
             let randomPrefixEncryptionOracle: ConsistentKeyEncryptionOracle;
 
@@ -57,7 +57,7 @@ describe("Challenge 14", () => {
         });
     });
 
-    describe("decryptConsistentKeyRandomPrefixEncryptionOracle", () => {
+    describe('decryptConsistentKeyRandomPrefixEncryptionOracle', () => {
         let encryptionOracle: ConsistentKeyEncryptionOracle;
 
         beforeEach(() => {

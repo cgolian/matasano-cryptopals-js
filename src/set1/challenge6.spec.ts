@@ -1,12 +1,12 @@
-import {BitArray} from "./challenge1";
-import {decryptRepeatingKeyXOR, hamming, splitIntoBlocks, transposeBlocks} from "./challenge6";
-import * as fs from "fs";
+import {BitArray} from './challenge1';
+import {decryptRepeatingKeyXOR, hamming, splitIntoBlocks, transposeBlocks} from './challenge6';
+import * as fs from 'fs';
 
-describe("Challenge 6", () => {
-   describe("Hamming distance", () => {
+describe('Challenge 6', () => {
+   describe('Hamming distance', () => {
         it('Should throw error for arrays of different length', () => {
-            const m1 = Buffer.from("this");
-            const m2 = Buffer.from("wokka wokka!!!");
+            const m1 = Buffer.from('this');
+            const m2 = Buffer.from('wokka wokka!!!');
             const arr1 = BitArray.fromBuffer(m1);
             const arr2 = BitArray.fromBuffer(m2);
 
@@ -14,8 +14,8 @@ describe("Challenge 6", () => {
         });
 
         it('Should be 37 for "this is a test" and "wokka wokka!!!"', () => {
-            const m1 = Buffer.from("this is a test");
-            const m2 = Buffer.from("wokka wokka!!!");
+            const m1 = Buffer.from('this is a test');
+            const m2 = Buffer.from('wokka wokka!!!');
             const arr1 = BitArray.fromBuffer(m1);
             const arr2 = BitArray.fromBuffer(m2);
 
@@ -25,7 +25,7 @@ describe("Challenge 6", () => {
         })
    });
 
-   describe("Block manipulation", () => {
+   describe('Block manipulation', () => {
       it('Should split content into blocks', () => {
           const content = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
@@ -62,12 +62,12 @@ describe("Challenge 6", () => {
        });
    });
 
-   describe("XOR decryption", () => {
+   describe('XOR decryption', () => {
         let ciphertext: Buffer;
 
         beforeEach(() => {
-           const fileContents = fs.readFileSync("./src/set1/6.txt", "utf8");
-           ciphertext = Buffer.from(fileContents, "base64");
+           const fileContents = fs.readFileSync('./src/set1/6.txt', 'utf8');
+           ciphertext = Buffer.from(fileContents, 'base64');
         });
 
         xit('Should decrypt ciphertext encrypted with repeating key XOR', () => {

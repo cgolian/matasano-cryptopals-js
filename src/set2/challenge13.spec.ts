@@ -1,33 +1,33 @@
-import {decryptEncodedUserProfile, encodeUserProfile, encryptEncodedUserProfile, parseKVString} from "./challenge13";
-import {splitIntoBlocks} from "../set1/challenge6";
-import {AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
+import {decryptEncodedUserProfile, encodeUserProfile, encryptEncodedUserProfile, parseKVString} from './challenge13';
+import {splitIntoBlocks} from '../set1/challenge6';
+import {AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
 
-describe("Challenge 13", () => {
-    describe("Helper functions", () => {
-        it("Should parse k=v string.", () => {
-            const expected = { role: "admin" };
+describe('Challenge 13', () => {
+    describe('Helper functions', () => {
+        it('Should parse k=v string.', () => {
+            const expected = { role: 'admin' };
 
-            const result = parseKVString("&role=admin&&&&&"); // TEST
+            const result = parseKVString('&role=admin&&&&&'); // TEST
 
             expect(expected).toEqual(result);
         });
 
-        it("Should return encoded user profile.", () => {
-            const expected = "email=a@b.com&uid=10&role=user";
+        it('Should return encoded user profile.', () => {
+            const expected = 'email=a@b.com&uid=10&role=user';
 
-            const result = encodeUserProfile("a@b.com"); // TEST
+            const result = encodeUserProfile('a@b.com'); // TEST
 
             expect(expected).toEqual(result);
         });
     });
 
-    it("Should assign admin role to regular user.", () => {
+    it('Should assign admin role to regular user.', () => {
         const encryptedAdminProfile = encryptEncodedUserProfile(
-            Buffer.from(encodeUserProfile("admin@mywebsite.com"))
+            Buffer.from(encodeUserProfile('admin@mywebsite.com'))
         );
 
         const encryptedUserProfile = encryptEncodedUserProfile(
-            Buffer.from(encodeUserProfile("aaaaaaaaa@bbbb.com"))
+            Buffer.from(encodeUserProfile('aaaaaaaaa@bbbb.com'))
         );
 
         const adminProfileBlocks = splitIntoBlocks(encryptedAdminProfile, AES_128_BLOCK_LENGTH_BYTES);
@@ -52,6 +52,6 @@ describe("Challenge 13", () => {
             encryptedTamperedUser
         ); // TEST
 
-        expect(result.role).toEqual("admin");
+        expect(result.role).toEqual('admin');
     });
 });

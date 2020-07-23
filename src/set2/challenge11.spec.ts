@@ -1,8 +1,8 @@
-import {AESEncryptionOracle} from "./challenge11";
-import {isECBEncrypted} from "../set1/challenge8";
+import {AESEncryptionOracle} from './challenge11';
+import {isECBEncrypted} from '../set1/challenge8';
 
-describe("Challenge 11", () => {
-    describe("Encryption oracle", () => {
+describe('Challenge 11', () => {
+    describe('Encryption oracle', () => {
        const plaintext = Buffer.from('0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567' +
             '89abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd' +
             'ef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123' +

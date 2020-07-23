@@ -1,5 +1,5 @@
-import {XORBitArrays} from "./challenge2";
-import {BitArray} from "./challenge1";
+import {XORBitArrays} from './challenge2';
+import {BitArray} from './challenge1';
 
 export function createXORKey(phrase: Buffer, length: number): Buffer {
     // make key as long as input

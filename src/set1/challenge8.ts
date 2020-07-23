@@ -1,4 +1,4 @@
-import {AES_128_BLOCK_LENGTH_BYTES} from "./challenge7";
+import {AES_128_BLOCK_LENGTH_BYTES} from './challenge7';
 
 type BlockMap = {
     [block: string]: number;

@@ -1,7 +1,7 @@
-import {transposeBlocks} from "../set1/challenge6";
-import {breakSingleByteXOR} from "../set1/challenge3";
-import {XORBitArrays} from "../set1/challenge2";
-import {BitArray} from "../set1/challenge1";
+import {transposeBlocks} from '../set1/challenge6';
+import {breakSingleByteXOR} from '../set1/challenge3';
+import {XORBitArrays} from '../set1/challenge2';
+import {BitArray} from '../set1/challenge1';
 
 export const ciphertexts = [
     'SSdtIHJhdGVkICJSIi4uLnRoaXMgaXMgYSB3YXJuaW5nLCB5YSBiZXR0ZXIgdm9pZCAvIFBvZXRzIGFyZSBwYXJhbm9pZCwgREoncyBELXN0cm95ZWQ=',

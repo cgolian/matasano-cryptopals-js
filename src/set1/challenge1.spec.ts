@@ -1,6 +1,6 @@
-import {hex2Base64, BitArray, Uint8BitArray} from "./challenge1";
+import {hex2Base64, BitArray, Uint8BitArray} from './challenge1';
 
-describe("Challenge 1", () => {
+describe('Challenge 1', () => {
 
     describe('Bit array', function () {
         let bitArray: BitArray;
@@ -152,7 +152,7 @@ describe("Challenge 1", () => {
         });
 
         it('Should convert hex string to BitArray', () => {
-            const result = BitArray.fromHexString("1234abcd"); // TEST
+            const result = BitArray.fromHexString('1234abcd'); // TEST
 
             expect(result.length).toEqual(32);
             // 0001 0010
@@ -166,7 +166,7 @@ describe("Challenge 1", () => {
         });
 
         it('Should convert BitArray to hex string', () => {
-            const expected = "1234abcd";
+            const expected = '1234abcd';
 
             const test = BitArray.fromHexString(expected);
             const result = BitArray.toHexString(test); // TEST

@@ -1,7 +1,7 @@
-import {createXORKey, encryptWithXOR} from "./challenge5";
+import {createXORKey, encryptWithXOR} from './challenge5';
 
-describe("Challenge 5", () => {
-    describe("Repeating key XOR", () => {
+describe('Challenge 5', () => {
+    describe('Repeating key XOR', () => {
         it('Should create key out of phrase "ICE"', () => {
            const phrase = Buffer.from('ICE');
            const expected = Buffer.from('ICEICEICEI');

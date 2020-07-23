@@ -1,7 +1,7 @@
-import {mt19937rng} from "./challenge21";
-import {XORBitArrays} from "../set1/challenge2";
-import {BitArray} from "../set1/challenge1";
-import * as crypto from "crypto";
+import {mt19937rng} from './challenge21';
+import {XORBitArrays} from '../set1/challenge2';
+import {BitArray} from '../set1/challenge1';
+import * as crypto from 'crypto';
 
 export function generateKeystreamFromRng(bufferLength: number, rand: () => number): Buffer {
     const keystream = Buffer.alloc(bufferLength);

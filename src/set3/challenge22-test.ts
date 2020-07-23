@@ -1,5 +1,5 @@
-import {mt19937rng} from "./challenge21";
-import {randAfterRandomDelay} from "./challenge22";
+import {mt19937rng} from './challenge21';
+import {randAfterRandomDelay} from './challenge22';
 
 let result: { generated: number; seed: number };
 const startTime = Date.now();

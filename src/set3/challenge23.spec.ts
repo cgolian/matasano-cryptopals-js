@@ -1,8 +1,8 @@
-import {copyMT19937Generator, untemper} from "./challenge23";
-import {mt19937rng} from "./challenge21";
+import {copyMT19937Generator, untemper} from './challenge23';
+import {mt19937rng} from './challenge21';
 
-describe("Challenge 23", () => {
-   describe(`"untemper" function`, () => {
+describe('Challenge 23', () => {
+   describe(`'untemper' function`, () => {
        it.each`
           before | after
           ${ 1440116776 } | ${2512043400},
@@ -16,14 +16,14 @@ describe("Challenge 23", () => {
           ${ 1342746158}  | ${482524299},
           ${ -1301996427} | ${572070480},
        `(
-           "given rng $before recovers the value before tempering $after",
+           'given rng $before recovers the value before tempering $after',
            ({ before, after }) => {
                expect(untemper(after)).toEqual(before);
            }
        );
    });
 
-   describe("copy generator", () => {
+   describe('copy generator', () => {
        let originalRng: () => number;
        let copiedRng: () => number;
 

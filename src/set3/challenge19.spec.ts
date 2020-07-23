@@ -1,7 +1,7 @@
-import {createCtrEncryptionOracle, CtrEncryptionOracle, plaintexts} from "./challenge19";
+import {createCtrEncryptionOracle, CtrEncryptionOracle, plaintexts} from './challenge19';
 
-describe("Challenge 19", () => {
-    describe("CTR encryption oracle", () => {
+describe('Challenge 19', () => {
+    describe('CTR encryption oracle', () => {
        let ctrEncryptionOracle: CtrEncryptionOracle;
 
        beforeEach(() => {

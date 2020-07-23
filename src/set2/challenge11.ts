@@ -1,7 +1,7 @@
-import * as crypto from "crypto";
-import {padBlockPKCS7} from "./challenge9";
-import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
-import {aes128CbcEncrypt} from "./challenge10";
+import * as crypto from 'crypto';
+import {padBlockPKCS7} from './challenge9';
+import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {aes128CbcEncrypt} from './challenge10';
 
 export interface EncryptionOracle {
 

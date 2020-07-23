@@ -1,11 +1,11 @@
-import * as crypto from "crypto";
-import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
-import {isECBEncrypted} from "../set1/challenge8";
+import * as crypto from 'crypto';
+import {aes128EcbEncrypt, AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {isECBEncrypted} from '../set1/challenge8';
 import {
     ConsistentKeyEncryptionOracle, decryptConsistentKeyEncryptionOracle
-} from "./challenge12";
-import {AESEncryptionOracle} from "./challenge11";
-import {padBlockPKCS7} from "./challenge9";
+} from './challenge12';
+import {AESEncryptionOracle} from './challenge11';
+import {padBlockPKCS7} from './challenge9';
 
 // I decided here to generate max one block random bytes
 // Solution below should however work for any number

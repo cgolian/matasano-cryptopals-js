@@ -1,4 +1,4 @@
-import {BitArray} from "./challenge1";
+import {BitArray} from './challenge1';
 
 export function XORBitArrays(input1: BitArray, input2: BitArray): BitArray {
     if ((input1.length != input2.length)) {

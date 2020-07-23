@@ -1,15 +1,15 @@
-import * as fs from "fs";
-import {aes128CbcDecrypt, aes128CbcEncrypt} from "./challenge10";
+import * as fs from 'fs';
+import {aes128CbcDecrypt, aes128CbcEncrypt} from './challenge10';
 
-describe("Challenge 10", () => {
+describe('Challenge 10', () => {
     let fileCiphertext: Buffer;
 
     beforeEach(() => {
-        const fileContents = fs.readFileSync("./src/set2/10.txt", "utf8");
+        const fileContents = fs.readFileSync('./src/set2/10.txt', 'utf8');
         fileCiphertext = Buffer.from(fileContents, 'base64');
     });
 
-    describe("AES CBC encryption", () => {
+    describe('AES CBC encryption', () => {
         it('should encrypt plaintext', () => {
             const iv = Buffer.alloc(16, 0x0);
             const key = Buffer.from('YELLOW SUBMARINE');
@@ -21,7 +21,7 @@ describe("Challenge 10", () => {
         });
     });
 
-    describe("AES CBC decryption", () => {
+    describe('AES CBC decryption', () => {
         it('should decrypt ciphertext', () => {
             const iv = Buffer.alloc(16, 0x0);
             const key = Buffer.from('YELLOW SUBMARINE');

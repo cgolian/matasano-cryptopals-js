@@ -1,6 +1,6 @@
-const base64Table = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
-    "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
-    "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/"];
+const base64Table = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+    'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'];
 
 export interface BitArrayConstructor {
     new(nrOfBits: number): BitArray;
@@ -67,7 +67,7 @@ export class Uint8BitArray implements BitArray {
     }
 
     static toHexString(bitArray: BitArray): string {
-        let hexString = "";
+        let hexString = '';
         for (let idx = 0; idx < bitArray.length; idx += 4) {
             const endIdx = (idx + 3) >= bitArray.length ? bitArray.length - 1 : idx + 3;
             const quartet = bitArray.getWord(idx, endIdx);

@@ -1,6 +1,6 @@
-import {ciphertexts, decryptCtrCiphertextsEncryptedWithSameNonce} from "./challenge20";
+import {ciphertexts, decryptCtrCiphertextsEncryptedWithSameNonce} from './challenge20';
 
-describe("Challenge 20", () => {
+describe('Challenge 20', () => {
     xit('should decrypt ciphertexts', () => {
         const result = decryptCtrCiphertextsEncryptedWithSameNonce(ciphertexts);
 

@@ -1,7 +1,7 @@
-import {BitArray} from "./challenge1";
-import {breakSingleByteXOR} from "./challenge3";
-import {XORBitArrays} from "./challenge2";
-import {createXORKey} from "./challenge5";
+import {BitArray} from './challenge1';
+import {breakSingleByteXOR} from './challenge3';
+import {XORBitArrays} from './challenge2';
+import {createXORKey} from './challenge5';
 
 type Keysize = {
     keysize: number;

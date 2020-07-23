@@ -1,4 +1,4 @@
-import {MT19937_BITS} from "./challenge21";
+import {MT19937_BITS} from './challenge21';
 
 async function sleep(millis: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, millis));

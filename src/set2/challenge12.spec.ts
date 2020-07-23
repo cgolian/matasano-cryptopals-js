@@ -2,22 +2,22 @@ import {
     ConsistentKeyEncryptionOracle,
     consistentKeyEncryptionOracle, createLastByteDictionaryForBlockAndByte, decryptConsistentKeyEncryptionOracle,
     discoverBlockSize
-} from "./challenge12";
-import {AES_128_BLOCK_LENGTH_BYTES} from "../set1/challenge7";
+} from './challenge12';
+import {AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
 
-describe("Challenge 12", () => {
+describe('Challenge 12', () => {
     let encryptionOracle: (plaintext: Buffer) => Buffer;
 
     beforeEach(() => {
        encryptionOracle = consistentKeyEncryptionOracle();
     });
 
-    describe("Helper functions", () => {
+    describe('Helper functions', () => {
        it('Should discover block size', () => {
            expect(discoverBlockSize(encryptionOracle)).toEqual(AES_128_BLOCK_LENGTH_BYTES); // TEST
        });
 
-       describe("Last byte dictionary", () => {
+       describe('Last byte dictionary', () => {
            let knownPlaintext: Buffer;
            let dummyEncryptionOracle: ConsistentKeyEncryptionOracle;
 
@@ -50,7 +50,7 @@ describe("Challenge 12", () => {
        });
     });
 
-    describe("Byte-at-a-time ECB decryption", () => {
+    describe('Byte-at-a-time ECB decryption', () => {
         xit('Should decrypt ciphertext', () => {
             const result = decryptConsistentKeyEncryptionOracle(encryptionOracle); // TEST
 

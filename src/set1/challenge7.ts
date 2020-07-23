@@ -1,5 +1,5 @@
-import {BitArray, Uint8BitArray} from "./challenge1";
-import {XORBitArrays} from "./challenge2";
+import {BitArray, Uint8BitArray} from './challenge1';
+import {XORBitArrays} from './challenge2';
 
 export const AES_128_BLOCK_LENGTH_BYTES = 16;
 const AES_128_NUMBER_OF_ROUNDS = 10;

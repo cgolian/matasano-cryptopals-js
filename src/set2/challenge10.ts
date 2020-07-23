@@ -4,9 +4,9 @@ import {
     splitTextIntoBlocks,
     validateKeyLength,
     validateTextLength
-} from "../set1/challenge7";
-import {XORBitArrays} from "../set1/challenge2";
-import {BitArray} from "../set1/challenge1";
+} from '../set1/challenge7';
+import {XORBitArrays} from '../set1/challenge2';
+import {BitArray} from '../set1/challenge1';
 
 /**
  * Encrypt plaintext with key using AES-128-CBC

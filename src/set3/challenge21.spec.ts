@@ -1,6 +1,6 @@
-import { mt19937rng } from "./challenge21";
+import { mt19937rng } from './challenge21';
 
-describe("Challenge 21", () => {
+describe('Challenge 21', () => {
     let expected: number[];
     let genRand: () => number;
 
