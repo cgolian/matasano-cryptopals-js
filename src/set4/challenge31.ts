@@ -1,21 +1,43 @@
-/*
-Implement and break HMAC-SHA1 with an artificial timing leak
+import Sha1 from './sha1';
+import {XORBitArrays} from '../set1/challenge2';
+import {BitArray} from '../set1/challenge1';
 
-The psuedocode on Wikipedia should be enough. HMAC is very easy.
+// SHA1 hash with hex input and hex output
+function hexSHA1(buffer: Buffer): Buffer {
+    return Buffer.from(Sha1.hash(buffer.toString('hex'), {
+        msgFormat: 'hex-bytes',
+        outFormat: 'hex'
+    }), 'hex');
+}
+export function computeHMACwSHA1(msg: Buffer, key: Buffer): Buffer {
+    const blockSizeBytes = 64;
+    const ipad = BitArray.fromBuffer(Buffer.alloc(blockSizeBytes, 0x36));
+    const opad = BitArray.fromBuffer(Buffer.alloc(blockSizeBytes, 0x5c));
+    const blockSizedKey = Buffer.alloc(blockSizeBytes, 0x0);
+    if (key.length > blockSizeBytes) {
+        const keyHash = hexSHA1(key);
+        keyHash.copy(blockSizedKey);
+    } else {
+        key.copy(blockSizedKey);
+    }
+    const xorO = BitArray.toBuffer(XORBitArrays(BitArray.fromBuffer(blockSizedKey), opad));
+    const xorI = BitArray.toBuffer(XORBitArrays(BitArray.fromBuffer(blockSizedKey), ipad));
+    const xorIwMsg = Buffer.concat([xorI, msg]);
+    const hashIwMsg = hexSHA1(xorIwMsg);
+    const xorOwMsg = Buffer.concat([xorO, hashIwMsg]);
+    return hexSHA1(xorOwMsg);
+}
 
-Using the web framework of your choosing (Sinatra, web.py, whatever), write a tiny application that has a URL that takes a "file" argument and a "signature" argument, like so:
+function sleep(millis: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}
 
-http://localhost:9000/test?file=foo&signature=46b4ec586117154dacd49d664e5d63fdc88efb51
-
-Have the server generate an HMAC key, and then verify that the "signature" on incoming requests is valid for "file", using the "==" operator to compare the valid MAC for a file with the "signature" parameter (in other words, verify the HMAC the way any normal programmer would verify it).
-
-Write a function, call it "insecure_compare", that implements the == operation by doing byte-at-a-time comparisons with early exit (ie, return false at the first non-matching byte).
-
-In the loop for "insecure_compare", add a 50ms sleep (sleep 50ms after each byte).
-
-Use your "insecure_compare" function to verify the HMACs on incoming requests, and test that the whole contraption works. Return a 500 if the MAC is invalid, and a 200 if it's OK.
-
-Using the timing leak in this application, write a program that discovers the valid MAC for any file.
-Why artificial delays?
-Early-exit string compares are probably the most common source of cryptographic timing leaks, but they aren't especially easy to exploit. In fact, many timing leaks (for instance, any in C, C++, Ruby, or Python) probably aren't exploitable over a wide-area network at all. To play with attacking real-world timing leaks, you have to start writing low-level timing code. We're keeping things cryptographic in these challenges.
- */
+export async function insecureCompare(buf1: Buffer, buf2: Buffer): Promise<boolean> {
+    for (let idxB1 = 0; idxB1 < buf1.length; idxB1++) {
+        if (buf1[idxB1] != buf2[idxB1]) {
+            return false;
+        }
+        await sleep(50);
+    }
+    return true;
+}

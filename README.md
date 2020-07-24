@@ -1,6 +1,7 @@
 # matasano-cryptopals-js
 
 // TODO cg check and complete
+// TODO cg check links  
 This repository contains my (frequently naive, sometimes maybe even plain wrong) solutions to the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hated).  
 
 I used (and slightly modified) following implementations of SHA1 and MD4 for challenges 29 and 30:  
@@ -11,53 +12,53 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 
 | Challenge                      | Status |Notes |
 | -------------------------------|:----:| :-----:|
-| 1. Convert hex to base64       | DONE ||
-| 2. Fixed XOR                   | DONE ||
-| 3. Single-byte XOR cipher      | DONE ||
-| 4. Detect single-character XOR | DONE ||
-| 5. Implement repeating-key XOR | DONE ||
-| 6. Break repeating-key XOR     | DONE ||
-| 7. AES in ECB mode             | DONE ||
-| 8. Detect AES in ECB mode      | DONE ||
+| 1. Convert hex to base64       | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge1.ts) ||
+| 2. Fixed XOR                   | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge2.ts) ||
+| 3. Single-byte XOR cipher      | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge3.ts) ||
+| 4. Detect single-character XOR | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge4.ts) ||
+| 5. Implement repeating-key XOR | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge5.ts) ||
+| 6. Break repeating-key XOR     | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge6.ts) ||
+| 7. AES in ECB mode             | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge7.ts) ||
+| 8. Detect AES in ECB mode      | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set1/challenge8.ts) ||
 
 ## Set 2 - Block crypto
 
 | Challenge                                  | Status | Notes  |
 | -------------------------------------------|:------:| :-----:|
-| 9. Implement PKCS#7 padding                | DONE   ||
-| 10. Implement CBC mode                     | DONE   ||
-| 11. An ECB/CBC detection oracle            | DONE   ||
-| 12. Byte-at-a-time ECB decryption (Simple) | DONE   ||
-| 13. ECB cut-and-paste                      | DONE   ||
-| 14. Byte-at-a-time ECB decryption (Harder) | DONE   ||
-| 15. PKCS#7 padding validation              | DONE   ||
-| 16. CBC bitflipping attacks                | DONE   ||
+| 9. Implement PKCS#7 padding                | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge9.ts)   ||
+| 10. Implement CBC mode                     | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge10.ts)   ||
+| 11. An ECB/CBC detection oracle            | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge11.ts)   ||
+| 12. Byte-at-a-time ECB decryption (Simple) | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge12.ts)   ||
+| 13. ECB cut-and-paste                      | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge13.ts)   ||
+| 14. Byte-at-a-time ECB decryption (Harder) | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge14.ts)   ||
+| 15. PKCS#7 padding validation              | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge15.ts)   ||
+| 16. CBC bitflipping attacks                | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set2/challenge16.ts)   ||
 
 ## Set 3 - Block & stream crypto
 
 | Challenge                                           | Status |Notes |
 | ----------------------------------------------------|:-------:| :-----:|
-| 17. The CBC padding oracle                          | DONE    ||
-| 18. Implement CTR, the stream cipher mode           | DONE    ||
-| 19. Break fixed-nonce CTR mode using substitutions  | DONE    ||
-| 20. Break fixed-nonce CTR statistically             | DONE    ||
-| 21. Implement the MT19937 Mersenne Twister RNG      | DONE    ||
-| 22. Crack an MT19937 seed                           | DONE    ||
-| 23. Clone an MT19937 RNG from its output            | DONE    ||
-| 24. Create the MT19937 stream cipher and break it   | DONE    ||
+| 17. The CBC padding oracle                          | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge17.ts)    ||
+| 18. Implement CTR, the stream cipher mode           | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge18.ts)    ||
+| 19. Break fixed-nonce CTR mode using substitutions  | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge19.ts)    ||
+| 20. Break fixed-nonce CTR statistically             | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge20.ts)    ||
+| 21. Implement the MT19937 Mersenne Twister RNG      | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge21.ts)    ||
+| 22. Crack an MT19937 seed                           | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge22.ts)    ||
+| 23. Clone an MT19937 RNG from its output            | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge23.ts)    ||
+| 24. Create the MT19937 stream cipher and break it   | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set3/challenge24.ts)    ||
 
 ## Set 4 - Stream crypto and randomness
 
 | Challenge                                                        | Status  |Notes |
 | -----------------------------------------------------------------|:-------:| :-----:|
-| 25. Break 'random access read/write' AES CTR                     | DONE    ||
-| 26. CTR bitflipping                                              | DONE    ||
-| 27. Recover the key from CBC with IV=Key                         | DONE    ||
-| 28. Implement a SHA-1 keyed MAC                                  | DONE    ||
-| 29. Break a SHA-1 keyed MAC using length extension               | DONE    ||
-| 30. Break an MD4 keyed MAC using length extension                | DONE    ||
-| 31. Implement and break HMAC-SHA1 with an artificial timing leak | WIP     ||
-| 32. Break HMAC-SHA1 with a slightly less artificial timing leak  | WIP     ||
+| 25. Break 'random access read/write' AES CTR                     | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge25.ts)    ||
+| 26. CTR bitflipping                                              | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge26.ts)     ||
+| 27. Recover the key from CBC with IV=Key                         | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge27.ts)     ||
+| 28. Implement a SHA-1 keyed MAC                                  | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge28.ts)     ||
+| 29. Break a SHA-1 keyed MAC using length extension               | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge29.ts)     ||
+| 30. Break an MD4 keyed MAC using length extension                | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge30.ts)     ||
+| 31. Implement and break HMAC-SHA1 with an artificial timing leak | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge31.ts)     ||
+| 32. Break HMAC-SHA1 with a slightly less artificial timing leak  | [DONE](https://github.com/cgolian/matasano-cryptopals-js/blob/master/src/set4/challenge32.ts)     |too slow?|
 
 ## Set 5 - Diffie-Hellman and friends
 

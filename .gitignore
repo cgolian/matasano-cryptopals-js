@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io
 
+src/set4/md4.js
+src/set4/sha1.js
+
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
