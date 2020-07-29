@@ -39,6 +39,5 @@ export function decryptThreeTimesRSAEncryptedPlaintext(ciphertexts: Buffer[], pu
     // CRT = (c0 + c1 + c2) mod n0*n1*n2
     const cubed = c0.plus(c1).plus(c2).mod(N);
     const plaintext = cubeRoot(cubed, 10_000);
-    const plaintextStr = plaintext.toString(16).slice(1); // we strip '1' in the front - has to do with the way I implemented RSA
-    return Buffer.from(plaintextStr, 'hex');
+    return Buffer.from(plaintext.toString(16), 'hex');
 }

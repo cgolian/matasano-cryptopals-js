@@ -26,3 +26,11 @@ export function sha256hmac(data: string, key: string): string {
         .update(data)
         .digest('hex');
 }
+
+export function rsaPlaintextNumberToBuffer(plaintextNum: BigNumber): Buffer {
+    let plaintextNumStr = plaintextNum.toString(16).slice(1); // strip '1' which was added
+    if (plaintextNumStr.length % 2 != 0) {
+        plaintextNumStr = '0'.concat(plaintextNumStr);
+    }
+    return Buffer.from(plaintextNumStr, 'hex');
+}

@@ -46,7 +46,7 @@ describe('Challenge 39', () => {
         let keyPair: RSAKeyPair;
 
         beforeEach(() => {
-            rsaFunctions = initRSA();
+            rsaFunctions = initRSA(true);
             keyPair = rsaFunctions.generateKeyPair(3, 200);
         });
 
