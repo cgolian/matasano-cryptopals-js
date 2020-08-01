@@ -1,7 +1,6 @@
 # matasano-cryptopals-js
 
-// TODO cg check and complete  
-This repository contains my (frequently naive, sometimes maybe even plain wrong) solutions to the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hated).  
+This repository contains my naive (sometimes maybe even wrong) solutions to the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hate).  
 
 I used (and slightly modified) following implementations of SHA1 and MD4 for challenges 29 and 30:  
 * https://github.com/chrisveness/crypto/blob/master/sha1.js
@@ -77,14 +76,14 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 
 | Challenge                                                                         | Status  |Notes |
 | ----------------------------------------------------------------------------------|:-------:| :-----:|
-| 41. Implement unpadded message recovery oracle                                    | WIP    ||
-| 42. Bleichenbacher's e=3 RSA Attack                                               | WIP    ||
-| 43. DSA key recovery from nonce                                                   | WIP    ||
-| 44. DSA nonce recovery from repeated nonce                                        | WIP    ||
-| 45. DSA parameter tampering                                                       | WIP    ||
-| 46. RSA parity oracle                                                             | WIP    ||
-| 47. Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)                        | WIP    ||
-| 48. Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)                      | WIP    ||
+| 41. Implement unpadded message recovery oracle                                    | DONE    ||
+| 42. Bleichenbacher's e=3 RSA Attack                                               | DONE    ||
+| 43. DSA key recovery from nonce                                                   | DONE    ||
+| 44. DSA nonce recovery from repeated nonce                                        | DONE    ||
+| 45. DSA parameter tampering                                                       | DONE    ||
+| 46. RSA parity oracle                                                             | DONE    ||
+| 47. Bleichenbacher's PKCS 1.5 Padding Oracle (Simple Case)                        | DONE    ||
+| 48. Bleichenbacher's PKCS 1.5 Padding Oracle (Complete Case)                      | DONE    ||
 
 ## Set 7 - Hashes
 
