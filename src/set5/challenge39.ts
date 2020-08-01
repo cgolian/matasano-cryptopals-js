@@ -1,5 +1,5 @@
 import {BigNumber} from 'bignumber.js';
-import {CryptoBigNumber, rsaPlaintextNumberToBuffer} from './utils';
+import {CryptoBigNumber} from './utils';
 import * as crypto from 'crypto';
 
 export interface RSAKey {
@@ -131,7 +131,7 @@ export function generateRandomPrime(numberOfBits: number): BigNumber {
     return prime;
 }
 
-export function initRSA(addPrefixWhenEncrypting?: boolean): RSAFunctions {
+export function initRSA(): RSAFunctions {
     function generateKeyPair(exponent: number, modulusLength: number): RSAKeyPair {
         const e = new CryptoBigNumber(exponent);
         let primesFound = false;
@@ -155,17 +155,6 @@ export function initRSA(addPrefixWhenEncrypting?: boolean): RSAFunctions {
         return { publicKey: { exponent: e, modulus: n }, privateKey: { exponent: d, modulus: n } };
     }
 
-    // should solve problems with plaintexts starting with zero bytes
-    function encryptMessagePrependLeadingOne(plaintext: Buffer, publicKey: RSAKey): Buffer {
-        const plaintextNum = new CryptoBigNumber('1'.concat(plaintext.toString('hex')), 16);
-        const ciphertextNum = plaintextNum.exponentiatedBy(publicKey.exponent, publicKey.modulus);
-        let ciphertextStr = ciphertextNum.toString(16);
-        if (ciphertextStr.length % 2 != 0) {
-            ciphertextStr = '0'.concat(ciphertextStr);
-        }
-        return Buffer.from(ciphertextStr, 'hex');
-    }
-
     function encryptMessage(plaintext: Buffer, publicKey: RSAKey): Buffer {
         const plaintextNum = new CryptoBigNumber(plaintext.toString('hex'), 16);
         const ciphertextNum = plaintextNum.exponentiatedBy(publicKey.exponent, publicKey.modulus);
@@ -174,13 +163,6 @@ export function initRSA(addPrefixWhenEncrypting?: boolean): RSAFunctions {
             ciphertextStr = '0'.concat(ciphertextStr);
         }
         return Buffer.from(ciphertextStr, 'hex');
-    }
-
-    // should solve problems with plaintexts starting with zero bytes
-    function decryptMessageStripLeadingOne(ciphertext: Buffer, privateKey: RSAKey): Buffer {
-        const ciphertextNum = new CryptoBigNumber(ciphertext.toString('hex'), 16);
-        const plaintextNum = ciphertextNum.exponentiatedBy(privateKey.exponent, privateKey.modulus);
-        return rsaPlaintextNumberToBuffer(plaintextNum);
     }
 
     function decryptMessage(ciphertext: Buffer, privateKey: RSAKey): Buffer {
@@ -195,7 +177,7 @@ export function initRSA(addPrefixWhenEncrypting?: boolean): RSAFunctions {
 
     return {
         generateKeyPair,
-        encryptMessage: addPrefixWhenEncrypting ? encryptMessagePrependLeadingOne : encryptMessage,
-        decryptMessage: addPrefixWhenEncrypting ? decryptMessageStripLeadingOne : decryptMessage
+        encryptMessage: encryptMessage,
+        decryptMessage: decryptMessage
     };
 }

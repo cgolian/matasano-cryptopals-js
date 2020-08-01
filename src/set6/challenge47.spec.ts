@@ -1,12 +1,19 @@
-import {initPKCS1v1dot5Padder, initPKCSPaddingOracle, PKCS1v1dot5Padder, PKCSPaddingOracle} from "./challenge47";
-import {initRSA, RSAFunctions, RSAKeyPair} from "../set5/challenge39";
+import {
+    decryptPKCSPaddingOracleSimple,
+    initPKCS1v15Padder,
+    initPKCSPaddingOracle,
+    PKCS1v15Padder,
+    PKCSPaddingOracle
+} from './challenge47';
+import {initRSA, RSAFunctions, RSAKeyPair} from '../set5/challenge39';
+import {CryptoBigNumber} from "../set5/utils";
 
 describe('Challenge 47', () => {
     describe('PKCS padding', () => {
-        let padder: PKCS1v1dot5Padder;
+        let padder: PKCS1v15Padder;
 
         beforeEach(() => {
-            padder = initPKCS1v1dot5Padder();
+            padder = initPKCS1v15Padder();
         });
 
         it('should pad in PKCS1v1.5 format', () => {
@@ -48,18 +55,18 @@ describe('Challenge 47', () => {
         let rsaFunctions: RSAFunctions;
         let rsaKeyPair: RSAKeyPair;
         let paddingOracle: PKCSPaddingOracle;
-        let padder: PKCS1v1dot5Padder;
+        let padder: PKCS1v15Padder;
 
         beforeEach(() => {
-            rsaFunctions = initRSA(true);
+            rsaFunctions = initRSA();
             rsaKeyPair = rsaFunctions.generateKeyPair(7, 256);
             paddingOracle = initPKCSPaddingOracle(rsaKeyPair);
-            padder = initPKCS1v1dot5Padder();
+            padder = initPKCS1v15Padder();
         });
 
         it('should return true for correctly padded plaintext', () => {
             const msg = Buffer.from(`kick it, CC`);
-            const padded = padder.pad(msg, 24);
+            const padded = padder.pad(msg, 32);
             const encrypted = rsaFunctions.encryptMessage(padded, rsaKeyPair.publicKey);
 
             const result = paddingOracle.isPlaintextPadded(encrypted); // TEST
@@ -69,13 +76,47 @@ describe('Challenge 47', () => {
 
         it('should return false for plaintext which is not padded', () => {
             const msg = Buffer.from(`kick it, CC`);
-            const padded = padder.pad(msg, 24);
+            const padded = padder.pad(msg, 32);
             padded[1] = 0x77;
             const encrypted = rsaFunctions.encryptMessage(padded, rsaKeyPair.publicKey);
 
             const result = paddingOracle.isPlaintextPadded(encrypted); // TEST
 
             expect(result).toEqual(false);
+        });
+    });
+
+    xdescribe('PKCS padding oracle attack (easy)', () => {
+        let rsa: RSAFunctions;
+        let rsaKeyPair: RSAKeyPair;
+        let msg: Buffer;
+        let padder: PKCS1v15Padder;
+        let encrypted: Buffer;
+        let oracle: PKCSPaddingOracle;
+
+        beforeEach(() => {
+            rsa = initRSA();
+            rsaKeyPair = {
+                privateKey: {
+                    exponent: new CryptoBigNumber('28538780907521151365105004358183044959091793723330827427102825592805338732155', 10),
+                    modulus: new CryptoBigNumber('42808171361281727047657506537274567439057747209816724612107287485075510888491', 10)
+                },
+                publicKey: {
+                    exponent: new CryptoBigNumber(3, 10),
+                    modulus: new CryptoBigNumber('42808171361281727047657506537274567439057747209816724612107287485075510888491', 10)
+                }
+            };
+            msg = Buffer.from('kick it, CC');
+            padder = initPKCS1v15Padder();
+            const padded = padder.pad(msg, 32);
+            encrypted = rsa.encryptMessage(padded, rsaKeyPair.publicKey);
+            oracle = initPKCSPaddingOracle(rsaKeyPair);
+        });
+
+        it('should recover plaintext', () => {
+            const result = decryptPKCSPaddingOracleSimple(encrypted, rsaKeyPair.publicKey, oracle); // TEST
+
+            expect(result.includes(msg)).toEqual(true);
         });
     });
 });

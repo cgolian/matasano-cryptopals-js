@@ -46,8 +46,8 @@ describe('Challenge 39', () => {
         let keyPair: RSAKeyPair;
 
         beforeEach(() => {
-            rsaFunctions = initRSA(true);
-            keyPair = rsaFunctions.generateKeyPair(3, 200);
+            rsaFunctions = initRSA();
+            keyPair = rsaFunctions.generateKeyPair(3, 256);
         });
 
         it('should encrypt & decrypt string using RSA', () => {
@@ -56,25 +56,7 @@ describe('Challenge 39', () => {
             const ciphertext = rsaFunctions.encryptMessage(plaintext, keyPair.publicKey); // TEST
             const result = rsaFunctions.decryptMessage(ciphertext, keyPair.privateKey); // TEST
 
-            expect(plaintext).toEqual(result);
-        });
-
-        it('should encrypt & decrypt string using RSA - zero bytes', () => {
-            const plaintext = Buffer.from([0x00, 0x01, 0x02, 0x03]);
-
-            const ciphertext = rsaFunctions.encryptMessage(plaintext, keyPair.publicKey); // TEST
-            const result = rsaFunctions.decryptMessage(ciphertext, keyPair.privateKey); // TEST
-
-            expect(plaintext).toEqual(result);
-        });
-
-        it('should encrypt & decrypt string using RSA - zero bytes 2', () => {
-            const plaintext = Buffer.from([0x00, 0x00, 0x00, 0x01, 0x02, 0x03]);
-
-            const ciphertext = rsaFunctions.encryptMessage(plaintext, keyPair.publicKey); // TEST
-            const result = rsaFunctions.decryptMessage(ciphertext, keyPair.privateKey); // TEST
-
-            expect(plaintext).toEqual(result);
+            expect(result).toEqual(plaintext);
         });
     });
 });

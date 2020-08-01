@@ -24,7 +24,7 @@ export interface RSAUnpaddedMessageRecoveryOracle {
 }
 
 export function initRSAUnpaddedMessageRecoveryOracle(): RSAUnpaddedMessageRecoveryOracle {
-    const rsaFunctions = initRSA(false);
+    const rsaFunctions = initRSA();
     const keyPair = rsaFunctions.generateKeyPair(3, 300);
     const previousHashes: {[key: string]: boolean} = {};
 
