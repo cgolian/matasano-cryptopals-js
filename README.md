@@ -1,6 +1,6 @@
 # matasano-cryptopals-js
 
-This repository contains my naive (sometimes maybe even wrong) solutions of the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hate).  
+This repository contains my naive (sometimes maybe even wrong) solutions to the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hate).  
 
 I used (and slightly modified) following implementations of SHA1 and MD4 for challenges 29 and 30:  
 * https://github.com/chrisveness/crypto/blob/master/sha1.js
