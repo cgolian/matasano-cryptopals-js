@@ -89,8 +89,8 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 
 | Challenge                                                                         | Status  |Notes |
 | ----------------------------------------------------------------------------------|:-------:| :-----:|
-| 49. CBC-MAC Message Forgery                                                       | WIP    ||
-| 50. Hashing with CBC-MAC                                                          | WIP    ||
+| 49. CBC-MAC Message Forgery                                                       | DONE    ||
+| 50. Hashing with CBC-MAC                                                          | DONE    ||
 | 51. Compression Ratio Side-Channel Attacks                                        | WIP    ||
 | 52. Iterated Hash Function Multicollisions                                        | WIP    ||
 | 53. Kelsey and Schneier's Expandable Messages                                     | WIP    ||
