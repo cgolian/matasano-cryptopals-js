@@ -1,6 +1,6 @@
 # matasano-cryptopals-js
 
-This repository contains my naive (sometimes maybe even wrong) solutions to the Matasano Cryptopals Challenges written in Javascript (which the original authors of the challenges probably hate).  
+This repository contains my naive (sometimes maybe even wrong) solutions to the Matasano Cryptopals Challenges written in node.js (even though the original authors of the challenges probably hate this idea).  
 
 I used (and slightly modified) following implementations of SHA1 and MD4 for challenges 29 and 30:  
 * https://github.com/chrisveness/crypto/blob/master/sha1.js
@@ -91,8 +91,8 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 | ----------------------------------------------------------------------------------|:-------:| :-----:|
 | 49. CBC-MAC Message Forgery                                                       | DONE    ||
 | 50. Hashing with CBC-MAC                                                          | DONE    ||
-| 51. Compression Ratio Side-Channel Attacks                                        | WIP    ||
-| 52. Iterated Hash Function Multicollisions                                        | WIP    ||
+| 51. Compression Ratio Side-Channel Attacks                                        | DONE    ||
+| 52. Iterated Hash Function Multicollisions                                        | DONE    ||
 | 53. Kelsey and Schneier's Expandable Messages                                     | WIP    ||
 | 54. Kelsey and Kohno's Nostradamus Attack                                         | WIP    ||
 | 55. MD4 Collisions                                                                | WIP    ||
