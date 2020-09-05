@@ -16,31 +16,42 @@ export type CollisionPair = {
     digest: Buffer;
 };
 
-export function createCustomMDHashFunction(digestSizeInBytes: number): (state: Buffer, input: Buffer) => Buffer {
+type ComputeDigestFn = (state: Buffer, input: Buffer) => Buffer;
+export type HashFn = ComputeDigestFn;
+export type CompressionFn = ComputeDigestFn;
+
+export function createCustomMDCompressionFunction(digestSizeInBytes: number): CompressionFn {
     if (digestSizeInBytes > AES_128_BLOCK_LENGTH_BYTES) throw Error(`Unsupported digest size`);
+    return function customMDCompressionFunction(state: Buffer, input: Buffer): Buffer {
+        const key = padBlockPKCS7(state, AES_128_BLOCK_LENGTH_BYTES);
+        const cipher = crypto.createCipheriv('aes-128-ecb', key, null);
+        const encrypted = Buffer.concat([cipher.update(input), cipher.final()]);
+        return encrypted.slice(0, digestSizeInBytes);
+    }
+}
+
+export function createCustomMDHashFunction(compressionFn: CompressionFn): HashFn {
     return function customMDHash(state: Buffer, input: Buffer): Buffer {
         const padded = padMessageMD(input, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
         const blocks = splitIntoBlocks(padded, AES_128_BLOCK_LENGTH_BYTES);
-        let digest = state, key, encrypted;
-        let cipher;
+        let digest = state;
         for (let bIdx = 0; bIdx < blocks.length; bIdx++) {
-            key = padBlockPKCS7(digest, AES_128_BLOCK_LENGTH_BYTES);
-            cipher = crypto.createCipheriv('aes-128-ecb', key, null);
-            encrypted = Buffer.concat([cipher.update(blocks[bIdx]), cipher.final()]);
-            digest = encrypted.slice(0, digestSizeInBytes);
+            digest = compressionFn(state, blocks[bIdx]);
         }
         return digest;
     }
 }
 
 /**
- * Find a pair of messages having the same digest
+ * Find a pair of messages (one block in length) having the same digest
  * @param digestSizeInBytes digest size in bytes
- * @param hashFn hash function used in computing the digest
+ * @param initialState initial state
+ * @param compressionFn compression function used in computing the digest
  */
 export function findCollisionPair(
     digestSizeInBytes: number,
-    hashFn: (msg: Buffer) => Buffer
+    initialState: Buffer,
+    compressionFn: CompressionFn
 ): CollisionPair {
     const q = Math.pow(2, Math.ceil((digestSizeInBytes * 8) / 2));
     let collision: CollisionPair | null = null;
@@ -48,13 +59,14 @@ export function findCollisionPair(
         // generate random messages
         const msgs = Array(q);
         for (let i = 0; i <= q; i++) {
-            msgs[i] = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
+            msgs[i] = padBlockPKCS7(crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES - 1), AES_128_BLOCK_LENGTH_BYTES);
         }
         // compute their hashes
         const digestDict: { [key: string]: string } = {};
-        let hexDigest, curMsgHex, matchingDigestMsgHex;
+        let digest: Buffer, hexDigest: string, curMsgHex: string, matchingDigestMsgHex: string;
         for (let i = 0; i < q; i++) {
-            hexDigest = hashFn(msgs[i]).toString('hex');
+            digest = compressionFn(initialState, msgs[i]);
+            hexDigest = digest.toString('hex');
             curMsgHex = msgs[i].toString('hex');
             // and look for collisions
             if (digestDict[hexDigest]) {
@@ -85,22 +97,19 @@ export type Collisions = {
  * Generate 2^t collisions for given hash function
  * @param t
  * @param digestSizeInBytes digest size
- * @param hashFn hash function
+ * @param compressionFn compression function
  */
 export function generateCollisions(
     t: number,
     digestSizeInBytes: number,
-    hashFn: (state: Buffer, msg: Buffer) => Buffer
+    compressionFn: CompressionFn
 ): Collisions {
     const collisionPairs: CollisionPair[] = Array(t);
     const initialState = crypto.randomBytes(digestSizeInBytes);
-    let collisionPair: CollisionPair, state: Buffer;
-    state = initialState;
-    const initializedHashFn: (input: Buffer) => Buffer = msg => hashFn(state, msg);
+    let collisionPair: CollisionPair;
     // make t calls to the "collision finding machine"
     for (let i = 0; i < t; i++) {
-        collisionPair = findCollisionPair(digestSizeInBytes, initializedHashFn);
-        state = collisionPair.digest;
+        collisionPair = findCollisionPair(digestSizeInBytes, initialState, compressionFn);
         // save blocks b_i and b'_i
         collisionPairs[i] = collisionPair;
     }
@@ -109,8 +118,8 @@ export function generateCollisions(
     let block1: Buffer, block2: Buffer;
     for (let i = 0; i < numOfMsgs; i++) {
         for (let j = 0; j < t; j++) {
-            block1 = padMessageMD(collisionPairs[j].msgPair.msg1, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
-            block2 = padMessageMD(collisionPairs[j].msgPair.msg2, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
+            block1 = collisionPairs[j].msgPair.msg1;
+            block2 = collisionPairs[j].msgPair.msg2;
             msg[j] = (i & (1 << j)) ? block1 : block2;
         }
         generatedMsgs[i] = Buffer.concat(msg);
@@ -122,9 +131,9 @@ export function generateCollisions(
 }
 
 export function findCollisionPairForCascadedMDHashFunction(
-    cheapMDHashFn: (state: Buffer, input: Buffer) => Buffer,
+    cheapMDCompressionFn: CompressionFn,
     cheapMDHashFnDigestSizeBytes: number,
-    expensiveMDHashFn: (state: Buffer, input: Buffer) => Buffer,
+    expensiveMDCompressionFn: CompressionFn,
     expensiveMDHashFnDigestSizeBytes: number,
 ): {
     msgPair: MsgPair;
@@ -137,12 +146,12 @@ export function findCollisionPairForCascadedMDHashFunction(
     let collisionFnCalls = 0, t;
     while (!collisionForBothFnsFound) {
         t = Math.ceil((expensiveMDHashFnDigestSizeBytes * 8) / 2);
-        collisions = generateCollisions(t, cheapMDHashFnDigestSizeBytes, cheapMDHashFn);
+        collisions = generateCollisions(t, cheapMDHashFnDigestSizeBytes, cheapMDCompressionFn);
         hashesDict = {};
         collisionFnCalls += t;
         let digest: Buffer, hexDigest: string;
         for (let msgIdx = 0; msgIdx < collisions.messages.length; msgIdx++) {
-            digest = expensiveMDHashFn(collisions.state, collisions.messages[msgIdx]);
+            digest = expensiveMDCompressionFn(collisions.state, collisions.messages[msgIdx]);
             hexDigest = digest.toString('hex');
             if (hashesDict[hexDigest]) {
                 collisionForBothFnsFound = true;

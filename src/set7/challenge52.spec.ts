@@ -1,17 +1,20 @@
 import * as crypto from 'crypto';
 import {
+    CompressionFn,
+    createCustomMDCompressionFunction,
     createCustomMDHashFunction,
     findCollisionPair,
     findCollisionPairForCascadedMDHashFunction,
-    generateCollisions
+    generateCollisions, HashFn
 } from './challenge52';
 
 describe('Challenge 52', () => {
    describe('Custom MD hash function', () => {
-       let customMDHash: (state: Buffer, input: Buffer) => Buffer;
+       let customMDHash: HashFn;
 
        beforeEach(() => {
-           customMDHash = createCustomMDHashFunction(2);
+           const customMDCompressionFn = createCustomMDCompressionFunction(2);
+           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
        });
 
        it('should compute digest of "random string"', () => {
@@ -26,16 +29,18 @@ describe('Challenge 52', () => {
    });
 
    describe('Find collision', () => {
-       let customMDHash: (state: Buffer, input: Buffer) => Buffer;
+       let customMDCompressionFn: CompressionFn;
+       let customMDHash: HashFn;
 
        beforeEach(() => {
-           customMDHash = createCustomMDHashFunction(2);
+           customMDCompressionFn = createCustomMDCompressionFunction(2);
+           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
        });
 
        it('should find pair of messages with the same digest for "custom MD hash function"', () => {
            const initialState = crypto.randomBytes(2);
 
-           const result = findCollisionPair(2, (msg: Buffer) => customMDHash(initialState, msg)); // TEST
+           const result = findCollisionPair(2, initialState, customMDCompressionFn); // TEST
 
            expect(result.msgPair.msg1).not.toEqual(result.msgPair.msg2);
            expect(customMDHash(initialState, result.msgPair.msg1)).toEqual(customMDHash(initialState, result.msgPair.msg2));
@@ -43,10 +48,11 @@ describe('Challenge 52', () => {
    });
 
    describe('Generate 2^n collisions', () => {
-       let customMDHash: (state: Buffer, input: Buffer) => Buffer;
+       let customMDHash: HashFn;
 
        beforeEach(() => {
-           customMDHash = createCustomMDHashFunction(2);
+           const customMDCompressionFn = createCustomMDCompressionFunction(2);
+           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
        });
 
        it('should generate 8 collisions', () => {
@@ -61,20 +67,24 @@ describe('Challenge 52', () => {
 
    xdescribe('Cascaded hash function', () => {
        let cheapMDHashFnDigestSize: number;
-       let cheapMDHashFn: (state: Buffer, input: Buffer) => Buffer;
+       let cheapMDCompressionFn: CompressionFn;
+       let cheapMDHashFn: HashFn;
        let expensiveMDHashFnDigestSize: number;
-       let expensiveMDHashFn: (state: Buffer, input: Buffer) => Buffer;
+       let expensiveMDCompressionFn: CompressionFn;
+       let expensiveMDHashFn: HashFn;
 
        beforeEach(() => {
            cheapMDHashFnDigestSize = 2;
-           cheapMDHashFn = createCustomMDHashFunction(cheapMDHashFnDigestSize);
+           cheapMDCompressionFn = createCustomMDCompressionFunction(cheapMDHashFnDigestSize);
+           cheapMDHashFn = createCustomMDHashFunction(cheapMDCompressionFn);
            expensiveMDHashFnDigestSize = 4;
-           expensiveMDHashFn = createCustomMDHashFunction(expensiveMDHashFnDigestSize);
+           expensiveMDCompressionFn = createCustomMDCompressionFunction(expensiveMDHashFnDigestSize);
+           expensiveMDHashFn = createCustomMDHashFunction(expensiveMDCompressionFn);
        });
 
        it('should find collision for both functions', () => {
           const result = findCollisionPairForCascadedMDHashFunction(
-               cheapMDHashFn, cheapMDHashFnDigestSize, expensiveMDHashFn, expensiveMDHashFnDigestSize); // TEST
+              cheapMDCompressionFn, cheapMDHashFnDigestSize, expensiveMDCompressionFn, expensiveMDHashFnDigestSize); // TEST
 
           expect(cheapMDHashFn(result.state, result.msgPair.msg1)).toEqual(cheapMDHashFn(result.state, result.msgPair.msg2));
           expect(expensiveMDHashFn(result.state, result.msgPair.msg1)).toEqual(expensiveMDHashFn(result.state, result.msgPair.msg2));
