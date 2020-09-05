@@ -4,6 +4,7 @@ import {
 } from '../set1/challenge7';
 import {splitIntoBlocks} from '../set1/challenge6';
 import * as crypto from 'crypto';
+import { padMessageMD } from '../set4/challenge29';
 
 export type MsgPair = {
     msg1: Buffer;
@@ -18,7 +19,7 @@ export type CollisionPair = {
 export function createCustomMDHashFunction(digestSizeInBytes: number): (state: Buffer, input: Buffer) => Buffer {
     if (digestSizeInBytes > AES_128_BLOCK_LENGTH_BYTES) throw Error(`Unsupported digest size`);
     return function customMDHash(state: Buffer, input: Buffer): Buffer {
-        const padded = input.length % AES_128_BLOCK_LENGTH_BYTES === 0 ? input : padBlockPKCS7(input, AES_128_BLOCK_LENGTH_BYTES);
+        const padded = padMessageMD(input, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
         const blocks = splitIntoBlocks(padded, AES_128_BLOCK_LENGTH_BYTES);
         let digest = state, key, encrypted;
         let cipher;
@@ -51,25 +52,25 @@ export function findCollisionPair(
         }
         // compute their hashes
         const digestDict: { [key: string]: string } = {};
-        let hexDigest, computedMsgHex, matchingDigestMsgHex;
+        let hexDigest, curMsgHex, matchingDigestMsgHex;
         for (let i = 0; i < q; i++) {
             hexDigest = hashFn(msgs[i]).toString('hex');
-            computedMsgHex = msgs[i].toString('hex');
+            curMsgHex = msgs[i].toString('hex');
             // and look for collisions
             if (digestDict[hexDigest]) {
                 matchingDigestMsgHex = digestDict[hexDigest];
-                if (matchingDigestMsgHex != computedMsgHex) {
+                if (matchingDigestMsgHex != curMsgHex) {
                     collision = {
                         msgPair: {
-                            msg1: Buffer.from(computedMsgHex, 'hex'),
-                            msg2: Buffer.from(matchingDigestMsgHex, 'hex'),
+                            msg1: Buffer.from(curMsgHex, 'hex'),
+                            msg2: Buffer.from(matchingDigestMsgHex, 'hex')
                         },
                         digest: Buffer.from(hexDigest, 'hex')
                     }
                     break;
                 }
             }
-            digestDict[hexDigest] = computedMsgHex;
+            digestDict[hexDigest] = curMsgHex;
         }
     }
     return collision;
@@ -91,7 +92,7 @@ export function generateCollisions(
     digestSizeInBytes: number,
     hashFn: (state: Buffer, msg: Buffer) => Buffer
 ): Collisions {
-    const blocks: CollisionPair[] = Array(t);
+    const collisionPairs: CollisionPair[] = Array(t);
     const initialState = crypto.randomBytes(digestSizeInBytes);
     let collisionPair: CollisionPair, state: Buffer;
     state = initialState;
@@ -101,13 +102,16 @@ export function generateCollisions(
         collisionPair = findCollisionPair(digestSizeInBytes, initializedHashFn);
         state = collisionPair.digest;
         // save blocks b_i and b'_i
-        blocks[i] = collisionPair;
+        collisionPairs[i] = collisionPair;
     }
     // construct 2^t messages from stored blocks
     const numOfMsgs = Math.pow(2, t), generatedMsgs: Buffer[] = Array(numOfMsgs), msg: Buffer[] = Array(t);
+    let block1: Buffer, block2: Buffer;
     for (let i = 0; i < numOfMsgs; i++) {
         for (let j = 0; j < t; j++) {
-            msg[j] = (i & (1 << j)) ? blocks[j].msgPair.msg1 : blocks[j].msgPair.msg2;
+            block1 = padMessageMD(collisionPairs[j].msgPair.msg1, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
+            block2 = padMessageMD(collisionPairs[j].msgPair.msg2, AES_128_BLOCK_LENGTH_BYTES * 8, 'BE');
+            msg[j] = (i & (1 << j)) ? block1 : block2;
         }
         generatedMsgs[i] = Buffer.concat(msg);
     }
