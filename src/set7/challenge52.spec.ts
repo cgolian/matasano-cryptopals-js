@@ -9,38 +9,60 @@ import {
 } from './challenge52';
 
 describe('Challenge 52', () => {
+   describe('Custom MD compression function', () => {
+       let digestSize: number;
+       let customMDCompressionFn: CompressionFn;
+
+       beforeEach(() => {
+           digestSize = 2;
+           customMDCompressionFn = createCustomMDCompressionFunction(digestSize);
+       });
+
+       it('should compute digest of expected size', () => {
+           const input = Buffer.from('random string');
+           const state = crypto.randomBytes(digestSize);
+
+           const result = customMDCompressionFn(state, input); // TEST
+
+           expect(result.length).toEqual(digestSize);
+       });
+   });
+
    describe('Custom MD hash function', () => {
+       let digestSize: number;
        let customMDHash: HashFn;
 
        beforeEach(() => {
-           const customMDCompressionFn = createCustomMDCompressionFunction(2);
-           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
+           digestSize = 2;
+           customMDHash = createCustomMDHashFunction(createCustomMDCompressionFunction(digestSize));
        });
 
        it('should compute digest of "random string"', () => {
             const input = Buffer.from('random string');
-            const state = crypto.randomBytes(2);
+            const state = crypto.randomBytes(digestSize);
 
             const digest = customMDHash(input, state); // TEST
 
             expect(digest).not.toBeNull();
-            expect(digest.length).toEqual(2)
+            expect(digest.length).toEqual(digestSize)
         });
    });
 
    describe('Find collision', () => {
+       let digestSize: number;
        let customMDCompressionFn: CompressionFn;
        let customMDHash: HashFn;
 
        beforeEach(() => {
-           customMDCompressionFn = createCustomMDCompressionFunction(2);
+           digestSize = 2;
+           customMDCompressionFn = createCustomMDCompressionFunction(digestSize);
            customMDHash = createCustomMDHashFunction(customMDCompressionFn);
        });
 
        it('should find pair of messages with the same digest for "custom MD hash function"', () => {
-           const initialState = crypto.randomBytes(2);
+           const initialState = crypto.randomBytes(digestSize);
 
-           const result = findCollisionPair(2, initialState, customMDCompressionFn); // TEST
+           const result = findCollisionPair(digestSize, initialState, customMDCompressionFn); // TEST
 
            expect(result.msgPair.msg1).not.toEqual(result.msgPair.msg2);
            expect(customMDHash(initialState, result.msgPair.msg1)).toEqual(customMDHash(initialState, result.msgPair.msg2));
@@ -51,8 +73,7 @@ describe('Challenge 52', () => {
        let customMDHash: HashFn;
 
        beforeEach(() => {
-           const customMDCompressionFn = createCustomMDCompressionFunction(2);
-           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
+           customMDHash = createCustomMDHashFunction(createCustomMDCompressionFunction(2));
        });
 
        it('should generate 8 collisions', () => {

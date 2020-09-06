@@ -59,7 +59,7 @@ export function findCollisionPair(
         // generate random messages
         const msgs = Array(q);
         for (let i = 0; i <= q; i++) {
-            msgs[i] = padBlockPKCS7(crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES - 1), AES_128_BLOCK_LENGTH_BYTES);
+            msgs[i] = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
         }
         // compute their hashes
         const digestDict: { [key: string]: string } = {};
@@ -130,6 +130,10 @@ export function generateCollisions(
     };
 }
 
+export type DigestDictionary = {
+    [hexDigest: string]: string;
+}
+
 export function findCollisionPairForCascadedMDHashFunction(
     cheapMDCompressionFn: CompressionFn,
     cheapMDHashFnDigestSizeBytes: number,
@@ -141,10 +145,9 @@ export function findCollisionPairForCascadedMDHashFunction(
     collisionFnCalls: number;
 } {
     let msgPair: MsgPair | null = null, state: Buffer | null = null;
-    let collisionForBothFnsFound = false;
-    let collisions: Collisions, hashesDict: { [key: string]: string };
+    let collisions: Collisions, hashesDict: DigestDictionary;
     let collisionFnCalls = 0, t;
-    while (!collisionForBothFnsFound) {
+    while (!msgPair || !state) {
         t = Math.ceil((expensiveMDHashFnDigestSizeBytes * 8) / 2);
         collisions = generateCollisions(t, cheapMDHashFnDigestSizeBytes, cheapMDCompressionFn);
         hashesDict = {};
@@ -154,7 +157,6 @@ export function findCollisionPairForCascadedMDHashFunction(
             digest = expensiveMDCompressionFn(collisions.state, collisions.messages[msgIdx]);
             hexDigest = digest.toString('hex');
             if (hashesDict[hexDigest]) {
-                collisionForBothFnsFound = true;
                 state = collisions.state;
                 msgPair = { msg1: Buffer.from(hashesDict[hexDigest], 'hex'), msg2: collisions.messages[msgIdx] };
                 break;
@@ -162,7 +164,6 @@ export function findCollisionPairForCascadedMDHashFunction(
             hashesDict[hexDigest] = collisions.messages[msgIdx].toString('hex');
         }
     }
-    if (!msgPair || !state) throw Error(`Could not find collision`);
     return {
         collisionFnCalls,
         state,
