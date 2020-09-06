@@ -74,16 +74,15 @@ describe('Challenge 53', () => {
             digestSize = 2;
             compressionFn = createCustomMDCompressionFunction(digestSize);
             hashFn = createCustomMDHashFunction(compressionFn);
+        });
+
+        it('should find second preimage for k = 10', () => {
+            const initialState = crypto.randomBytes(digestSize);
             const msgBlock = Buffer.from('YELLOW SUBMARINE');
             msg = Buffer.alloc(1024 * AES_128_BLOCK_LENGTH_BYTES) // 2 ^ 10 = 1024
             for (let i = 0; i < 1024; i++) {
                 msgBlock.copy(msg, i, (i + 1) * AES_128_BLOCK_LENGTH_BYTES);
             }
-        });
-
-
-        it('should find second preimage', () => {
-            const initialState = crypto.randomBytes(digestSize);
 
             const preimage = findSecondPreimageForLongMessage(msg, initialState, digestSize, compressionFn); // TEST
 

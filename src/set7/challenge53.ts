@@ -26,7 +26,7 @@ export function findCollisionForMessagesOfDifferentLength(
         const msgs = Array(Math.pow(2, (digestSizeInBytes / 2) * 8));
         let msg: Buffer;
         for (let i = 0; i < msgs.length; i++) {
-            msg = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES); 
+            msg = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
             msgs[i] = msg;
         }
         // compute their hashes & look for a collision
