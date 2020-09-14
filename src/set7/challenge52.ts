@@ -36,7 +36,7 @@ export function createCustomMDHashFunction(compressionFn: CompressionFn): HashFn
         const blocks = splitIntoBlocks(padded, AES_128_BLOCK_LENGTH_BYTES);
         let digest = state;
         for (let bIdx = 0; bIdx < blocks.length; bIdx++) {
-            digest = compressionFn(state, blocks[bIdx]);
+            digest = compressionFn(digest, blocks[bIdx]);
         }
         return digest;
     }
@@ -108,10 +108,12 @@ export function generateCollisions(
     const initialState = crypto.randomBytes(digestSizeInBytes);
     let collisionPair: CollisionPair;
     // make t calls to the "collision finding machine"
+    let state = initialState;
     for (let i = 0; i < t; i++) {
-        collisionPair = findCollisionPair(digestSizeInBytes, initialState, compressionFn);
+        collisionPair = findCollisionPair(digestSizeInBytes, state, compressionFn);
         // save blocks b_i and b'_i
         collisionPairs[i] = collisionPair;
+        state = collisionPair.digest;
     }
     // construct 2^t messages from stored blocks
     const numOfMsgs = Math.pow(2, t), generatedMsgs: Buffer[] = Array(numOfMsgs), msg: Buffer[] = Array(t);
@@ -152,9 +154,14 @@ export function findCollisionPairForCascadedMDHashFunction(
         collisions = generateCollisions(t, cheapMDHashFnDigestSizeBytes, cheapMDCompressionFn);
         hashesDict = {};
         collisionFnCalls += t;
-        let digest: Buffer, hexDigest: string;
+        let digest: Buffer, hexDigest: string, blocks: Buffer[];
         for (let msgIdx = 0; msgIdx < collisions.messages.length; msgIdx++) {
-            digest = expensiveMDCompressionFn(collisions.state, collisions.messages[msgIdx]);
+            // compute digest using "expensive" compression fn
+            blocks = splitIntoBlocks(collisions.messages[msgIdx], AES_128_BLOCK_LENGTH_BYTES);
+            digest = collisions.state;
+            for (let bIdx = 0; bIdx < blocks.length; bIdx++) {
+                digest = expensiveMDCompressionFn(digest, blocks[bIdx]);
+            }
             hexDigest = digest.toString('hex');
             if (hashesDict[hexDigest]) {
                 state = collisions.state;

@@ -4,7 +4,7 @@ import {
     createCustomMDCompressionFunction, createCustomMDHashFunction, HashFn
 } from './challenge52';
 import {
-    createExpandableMessage,
+    createExpandableMessage, expandMessageToLength,
     findCollisionForMessagesOfDifferentLength,
     findSecondPreimageForLongMessage
 } from './challenge53';
@@ -29,7 +29,7 @@ describe('Challenge 53', () => {
             const result = findCollisionForMessagesOfDifferentLength(initialState, dummyBlocks, digestSize, compressionFn); // TEST
 
             let digest = initialState;
-            const longBlocks = [...dummyBlocks, result.longMsgBlock];
+            const longBlocks = [...dummyBlocks, ...splitIntoBlocks(result.longMsgBlock, AES_128_BLOCK_LENGTH_BYTES)];
             for (let bIdx = 0; bIdx < longBlocks.length; bIdx++) {
                digest = compressionFn(digest, longBlocks[bIdx]);
             }
@@ -52,7 +52,6 @@ describe('Challenge 53', () => {
             const expandableMsg = createExpandableMessage(10, initialState, digestSize, compressionFn); // TEST
 
             expect(expandableMsg.length).toEqual(10);
-            expect(expandableMsg.every(block => block.longMsg.length))
             expect(expandableMsg.every(block => {
                 let digest = block.state;
                 const blocks = splitIntoBlocks(block.longMsg, AES_128_BLOCK_LENGTH_BYTES);
@@ -61,6 +60,16 @@ describe('Challenge 53', () => {
                 }
                 return digest.equals(compressionFn(block.state, block.shortMsg));
             })).toEqual(true);
+        });
+
+        it('should expand message to desired length', () => {
+            const initialState = crypto.randomBytes(digestSize);
+
+            const expandableMsg = createExpandableMessage(4, initialState, digestSize, compressionFn);
+            const result = expandMessageToLength(expandableMsg, 10); // TEST
+
+            expect(result.length).toEqual(10);
+            expect(result.every(msg => msg.length === AES_128_BLOCK_LENGTH_BYTES)).toEqual(true);
         });
     });
 
@@ -78,16 +87,17 @@ describe('Challenge 53', () => {
 
         it('should find second preimage for k = 10', () => {
             const initialState = crypto.randomBytes(digestSize);
-            const msgBlock = Buffer.from('YELLOW SUBMARINE');
+            const msgBlock = Buffer.alloc(AES_128_BLOCK_LENGTH_BYTES);
             msg = Buffer.alloc(1024 * AES_128_BLOCK_LENGTH_BYTES) // 2 ^ 10 = 1024
             for (let i = 0; i < 1024; i++) {
-                msgBlock.copy(msg, i, (i + 1) * AES_128_BLOCK_LENGTH_BYTES);
+                msgBlock.writeUInt32BE(i);
+                msgBlock.copy(msg,  i * AES_128_BLOCK_LENGTH_BYTES);
             }
 
             const preimage = findSecondPreimageForLongMessage(msg, initialState, digestSize, compressionFn); // TEST
 
             expect(preimage.length).toEqual(msg.length);
-            expect(hashFn(initialState, preimage)).toEqual(hashFn(initialState, msg));
+            expect(hashFn(initialState, msg)).toEqual(hashFn(initialState, preimage));
         });
     });
 });

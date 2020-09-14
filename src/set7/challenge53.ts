@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import {CompressionFn, DigestDictionary} from './challenge52';
-import {AES_128_BLOCK_LENGTH_BYTES} from '../set1/challenge7';
+import {AES_128_BLOCK_LENGTH_BYTES, splitTextIntoBlocks} from '../set1/challenge7';
 import {splitIntoBlocks} from '../set1/challenge6';
 
 export type DifferingLengthCollisionPair = {
@@ -80,10 +80,12 @@ export function createExpandableMessage(
     for (let i = k-1; i >= 0; i--) {
         numOfDummyBlocks = Math.pow(2, i);
         dummyBlocks = dummyBlocksArr.slice(0, numOfDummyBlocks);
-        collisionPair = findCollisionForMessagesOfDifferentLength(curBlockDigest, dummyBlocks, digestSizeInBytes, compressionFn);
-        pairs[i] = {
+        collisionPair = findCollisionForMessagesOfDifferentLength(
+            curBlockDigest, dummyBlocks, digestSizeInBytes, compressionFn
+        );
+        pairs[k-1-i] = {
             longMsg: Buffer.concat([...dummyBlocks, collisionPair.longMsgBlock]),
-            shortMsg: Buffer.concat([collisionPair.shortMsgBlock]),
+            shortMsg: collisionPair.shortMsgBlock,
             state: curBlockDigest
         };
         curBlockDigest = collisionPair.digest;
@@ -91,34 +93,64 @@ export function createExpandableMessage(
     return pairs;
 }
 
-function createPreimage(
+export function expandMessageToLength(
     expandableMessageBlocks: ExpandableMessageBlock[],
-    linkIdx: number,
-    linkingBlock: Buffer,
-    originalMsgBlocks: Buffer[]
-): Buffer {
-    const preimageMsgBlocks = Array(originalMsgBlocks.length);
-    // copy linking block
-    preimageMsgBlocks[linkIdx - 1] = linkingBlock;
-    // copy blocks of the original message
-    for (let i = linkIdx; i < originalMsgBlocks.length; i++) {
-        preimageMsgBlocks[i] = originalMsgBlocks[i];
-    }
-    // copy (and expand prefix blocks)
-    const numOfMissingBlocks = linkIdx - 1 - expandableMessageBlocks.length;
-    let prefixBlockIdx = 0;
-    let expandedBlocks: Buffer[];
-    for (let i = 0; i < expandableMessageBlocks.length; i++) {
-        if (numOfMissingBlocks & (1 << i)) {
-            expandedBlocks = splitIntoBlocks(expandableMessageBlocks[i].longMsg, AES_128_BLOCK_LENGTH_BYTES);
-            for (let j = 0; j < expandedBlocks.length; j++) {
-                preimageMsgBlocks[prefixBlockIdx++] = expandedBlocks[j];
+    desiredLengthInBlocks: number
+): Buffer[] {
+    const expanded: Buffer[] = Array(desiredLengthInBlocks);
+    const diff = desiredLengthInBlocks - expandableMessageBlocks.length;
+    let expandedIdx = 0;
+    const base = expandableMessageBlocks.length - 1;
+    for (let bIdx = 0; bIdx <= base; bIdx++) {
+        if (diff & (1 << (base - bIdx))) {
+            const blocks = splitTextIntoBlocks(expandableMessageBlocks[bIdx].longMsg, AES_128_BLOCK_LENGTH_BYTES);
+            for (let lIdx = 0; lIdx < blocks.length; lIdx++) {
+                expanded[expandedIdx++] = blocks[lIdx];
             }
         } else {
-            preimageMsgBlocks[prefixBlockIdx++] = expandableMessageBlocks[i].shortMsg;
+            expanded[expandedIdx++] = expandableMessageBlocks[bIdx].shortMsg;
         }
     }
-    return Buffer.concat(preimageMsgBlocks);
+    return expanded;
+}
+
+function findLinkingBlock(
+    finalState: Buffer,
+    computedDigestBlockMap: {[digest: string]: number},
+    compressionFn: CompressionFn,
+    digestSizeInBytes: number,
+    numOfAttempts: number,
+): { linkingBlock: Buffer; linkIdx: number } {
+    let linkingBlock: Buffer | null = null, linkingDigest: Buffer, linkIdx = null;
+    do {
+        for (let i = 0; i < numOfAttempts; i++) {
+            linkingBlock = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
+            linkingDigest = compressionFn(finalState, linkingBlock);
+            if (computedDigestBlockMap[linkingDigest.toString('hex')]) {
+                // Note the index i it maps to.
+                linkIdx = computedDigestBlockMap[linkingDigest.toString('hex')];
+                break;
+            }
+        }
+    } while (!linkIdx || !linkingBlock);
+    return { linkingBlock, linkIdx };
+}
+
+function generateHashStatesMap(
+    initialState: Buffer,
+    msgBlocks: Buffer[],
+    compressionFn: CompressionFn,
+    k: number
+): {[digest: string]: number} {
+    const digestBlockIdxMap: { [key: string]: number } = {};
+    let digest = initialState;
+    for (let bIdx = 0; bIdx < msgBlocks.length; bIdx++) {
+        if (bIdx >= k + 1) {
+            digestBlockIdxMap[digest.toString('hex')] = bIdx;
+        }
+        digest = compressionFn(digest, msgBlocks[bIdx]);
+    }
+    return digestBlockIdxMap;
 }
 
 export function findSecondPreimageForLongMessage(
@@ -131,31 +163,18 @@ export function findSecondPreimageForLongMessage(
     // 1. Generate an expandable message of length (k, k + 2^k - 1) using the strategy outlined above
     const k = Math.ceil(Math.log2(msgBlocks.length));
     const expandableMessageBlocks = createExpandableMessage(k, initialState, digestSizeInBytes, compressionFn);
-    const digestBlockIdxMap: { [key: string]: number } = {};
-    let digest = initialState;
     // 2. Hash M and generate a map of intermediate hash states to the block indices that they correspond to.
-    for (let bIdx = k+1; bIdx < msgBlocks.length; bIdx++) {
-        digestBlockIdxMap[digest.toString('hex')] = bIdx;
-        digest = compressionFn(digest, msgBlocks[bIdx]);
-    }
+    const digestBlockIdxMap = generateHashStatesMap(initialState, msgBlocks, compressionFn, k);
     // 3. From your expandable message's final state, find a single-block "bridge" to intermediate state in your map.
     const finalState = compressionFn(
         expandableMessageBlocks[expandableMessageBlocks.length - 1].state,
         expandableMessageBlocks[expandableMessageBlocks.length - 1].shortMsg
     );
-    let linkingBlock: Buffer | null = null, linkingDigest: Buffer, linkIdx = null;
-    do {
-        const numOfAttempts = Math.pow(2, (digestSizeInBytes * 8) - k);
-        for (let i = 0; i < numOfAttempts; i++) {
-            linkingBlock = crypto.randomBytes(AES_128_BLOCK_LENGTH_BYTES);
-            linkingDigest = compressionFn(finalState, linkingBlock);
-            if (digestBlockIdxMap[linkingDigest.toString('hex')]) {
-                // Note the index i it maps to.
-                linkIdx = digestBlockIdxMap[linkingDigest.toString('hex')];
-                break;
-            }
-        }
-    } while (!linkIdx || !linkingBlock);
+    const numOfAttempts = Math.pow(2, (digestSizeInBytes * 8) - k);
+    const { linkingBlock, linkIdx } = findLinkingBlock(
+        finalState, digestBlockIdxMap, compressionFn, digestSizeInBytes, numOfAttempts
+    );
     // 4. Use your expandable message to generate a prefix of the right length such that len(prefix || bridge || M[i..]) = len(M).
-    return createPreimage(expandableMessageBlocks, linkIdx, linkingBlock, msgBlocks);
+    const expandedBlocks = expandMessageToLength(expandableMessageBlocks, linkIdx - 1);
+    return Buffer.concat([...expandedBlocks, linkingBlock, ...msgBlocks.slice(linkIdx)]);
 }

@@ -70,19 +70,22 @@ describe('Challenge 52', () => {
    });
 
    describe('Generate 2^n collisions', () => {
+       let customMDCompressionFn: CompressionFn;
        let customMDHash: HashFn;
 
        beforeEach(() => {
-           customMDHash = createCustomMDHashFunction(createCustomMDCompressionFunction(2));
+           customMDCompressionFn = createCustomMDCompressionFunction(2);
+           customMDHash = createCustomMDHashFunction(customMDCompressionFn);
        });
 
        it('should generate 8 collisions', () => {
-           const collisions = generateCollisions(3, 2, customMDHash); // TEST
+           const collisions = generateCollisions(3, 2, customMDCompressionFn); // TEST
 
            expect(collisions.messages.length).toEqual(8);
 
            const digest = customMDHash(collisions.state, collisions.messages[0]);
-           expect(collisions.messages.every((msg) => customMDHash(collisions.state, msg).equals(digest))).toEqual(true);
+           expect(collisions.messages.every(
+               (msg) => customMDHash(collisions.state, msg).equals(digest))).toEqual(true);
        });
    });
 
