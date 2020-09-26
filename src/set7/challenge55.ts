@@ -145,6 +145,7 @@ export function modifyMessageToMeetFirstRoundConstraints(
     words: number[];
     states: { a: number; b: number; c: number; d: number}[];
 } {
+    const modified = [...msg];
     let a = md4InitialState[0]; let b = md4InitialState[1]; let c = md4InitialState[2]; let d = md4InitialState[3];
     let oldA: number, oldB: number, oldC: number, oldD: number;
     const states = [];
@@ -154,41 +155,41 @@ export function modifyMessageToMeetFirstRoundConstraints(
         });
         oldA = a;
         a = applyConstraintsToWord(
-            {word: md4_ff(a, b, c, d, msg[4*i], md4FirstRoundBitShiftConstants[0]), constraints: constraints[i].a },
+            {word: md4_ff(a, b, c, d, modified[4*i], md4FirstRoundBitShiftConstants[0]), constraints: constraints[i].a },
             {a, b, c, d}
             );
-        msg[4*i] = rrot(a, md4FirstRoundBitShiftConstants[0]) - safe_add(oldA, ((b & c) | ((~b) & d)));
-        msg[4*i] = msg[4*i] % maxWordSizeBits;
+        modified[4*i] = rrot(a, md4FirstRoundBitShiftConstants[0]) - safe_add(oldA, ((b & c) | ((~b) & d)));
+        modified[4*i] = modified[4*i] % maxWordSizeBits;
 
         oldD = d;
         d = applyConstraintsToWord(
-            {word: md4_ff(d, a, b, c, msg[4*i + 1], md4FirstRoundBitShiftConstants[1]), constraints: constraints[i].d },
+            {word: md4_ff(d, a, b, c, modified[4*i + 1], md4FirstRoundBitShiftConstants[1]), constraints: constraints[i].d },
             {a, b, c, d}
             );
-        msg[4*i + 1] = rrot(d, md4FirstRoundBitShiftConstants[1]) - safe_add(oldD, ((a & b) | ((~a) & c)));
-        msg[4*i + 1] = msg[4*i + 1] % maxWordSizeBits;
+        modified[4*i + 1] = rrot(d, md4FirstRoundBitShiftConstants[1]) - safe_add(oldD, ((a & b) | ((~a) & c)));
+        modified[4*i + 1] = modified[4*i + 1] % maxWordSizeBits;
 
         oldC = c;
         c = applyConstraintsToWord(
-            {word: md4_ff(c, d, a, b, msg[4*i + 2], md4FirstRoundBitShiftConstants[2]), constraints: constraints[i].c },
+            {word: md4_ff(c, d, a, b, modified[4*i + 2], md4FirstRoundBitShiftConstants[2]), constraints: constraints[i].c },
             {a, b, c, d}
             );
-        msg[4*i + 2] = rrot(c, md4FirstRoundBitShiftConstants[2]) - safe_add(oldC, ((d & a) | ((~d) & b)));
-        msg[4*i + 2] = msg[4*i + 2] % maxWordSizeBits;
+        modified[4*i + 2] = rrot(c, md4FirstRoundBitShiftConstants[2]) - safe_add(oldC, ((d & a) | ((~d) & b)));
+        modified[4*i + 2] = modified[4*i + 2] % maxWordSizeBits;
 
         oldB = b;
         b = applyConstraintsToWord(
-            {word: md4_ff(b, c, d, a, msg[4*i + 3], md4FirstRoundBitShiftConstants[3]), constraints: constraints[i].b },
+            {word: md4_ff(b, c, d, a, modified[4*i + 3], md4FirstRoundBitShiftConstants[3]), constraints: constraints[i].b },
             {a, b, c, d}
             );
-        msg[4*i + 3] = rrot(b, md4FirstRoundBitShiftConstants[3]) - safe_add(oldB, ((c & d) | ((~c) & a)));
-        msg[4*i + 3] = msg[4*i + 3] % maxWordSizeBits;
+        modified[4*i + 3] = rrot(b, md4FirstRoundBitShiftConstants[3]) - safe_add(oldB, ((c & d) | ((~c) & a)));
+        modified[4*i + 3] = modified[4*i + 3] % maxWordSizeBits;
     }
     states.push({
         a, b, c, d
     });
     return {
-        words: msg,
+        words: modified,
         states
     };
 }
@@ -344,6 +345,3 @@ generated collisions:
   msg2Hex: '388bb0f0563753491139c742f1804f6ae3ccdda801e390bfdc3084357b8d6dab85483dd865a96797a82224ec5f43068a2b78aba94e53768f9328cebd7c5403c5'
 }
  */
-
-const result = generateCollision();
-console.log(result);
