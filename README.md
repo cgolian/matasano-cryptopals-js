@@ -95,7 +95,7 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 | 52. Iterated Hash Function Multicollisions                                        | DONE    ||
 | 53. Kelsey and Schneier's Expandable Messages                                     | DONE    ||
 | 54. Kelsey and Kohno's Nostradamus Attack                                         | DONE    ||
-| 55. MD4 Collisions                                                                | WIP    ||
+| 55. MD4 Collisions                                                                | DONE    ||
 | 56. RC4 Single-Byte Biases                                                        | WIP    ||
 
 
