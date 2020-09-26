@@ -16,13 +16,13 @@ var b64pad  = ''; /* base-64 pad character. '=' for strict RFC compliance   */
 var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
 
 // added custom function enabling hexadecimal input
-export function hex_md4_hex_input(s, state, desiredLength) {
+function hex_md4_hex_input(s, state, desiredLength) {
     return binl2hex(core_md4(hex2binl(s), s.length * 4, desiredLength, state));
 }
 /*
  * These are the functions you'll usually want to call
  */
-export function hex_md4(s){ return binl2hex(core_md4(str2binl(s),s.length * chrsz));}
+function hex_md4(s){ return binl2hex(core_md4(str2binl(s),s.length * chrsz));}
 function b64_md4(s){ return binl2b64(core_md4(str2binl(s), s.length * chrsz));}
 function str_md4(s){ return binl2str(core_md4(str2binl(s), s.length * chrsz));}
 function hex_hmac_md4(key, data) { return binl2hex(core_hmac_md4(key, data)); }
@@ -40,7 +40,7 @@ function md4_vm_test()
 /*
  * Calculate the MD4 of an array of little-endian words, and a bit length
  */
-export function core_md4(x, len, tamperedLen, state)
+function core_md4(x, len, tamperedLen, state)
 {
     /* append padding */
     x[len >> 5] |= 0x80 << (len % 32);
@@ -246,4 +246,17 @@ function binl2b64(binarray)
         }
     }
     return str;
+}
+
+export {
+    binl2hex,
+    binl2str,
+    hex2binl,
+    str2binl,
+    safe_add,
+    md4_ff,
+    md4_gg,
+    core_md4,
+    hex_md4,
+    hex_md4_hex_input
 }
