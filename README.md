@@ -97,17 +97,3 @@ I used (and slightly modified) following implementations of SHA1 and MD4 for cha
 | 54. Kelsey and Kohno's Nostradamus Attack                                         | DONE    ||
 | 55. MD4 Collisions                                                                | DONE    ||
 | 56. RC4 Single-Byte Biases                                                        | DONE    ||
-
-
-## Set 8 - Abstract Algebra
-
-| Challenge                                                                         | Status  |Notes |
-| ----------------------------------------------------------------------------------|:-------:| :-----:|
-| 57. Diffie-Hellman Revisited: Small Subgroup Confinement                          | WIP    ||
-| 58. Pollard's Method for Catching Kangaroos                                       | WIP    ||
-| 59. Elliptic Curve Diffie-Hellman and Invalid-Curve Attacks                       | WIP    ||
-| 60. Single-Coordinate Ladders and Insecure Twists                                 | WIP    ||
-| 61. Duplicate-Signature Key Selection in ECDSA (and RSA)                          | WIP    ||
-| 62. Key-Recovery Attacks on ECDSA with Biased Nonces                              | WIP    ||
-| 63. Key-Recovery Attacks on GCM with Repeated Nonces                              | WIP    ||
-| 64. Key-Recovery Attacks on GCM with a Truncated MAC                              | WIP    ||
