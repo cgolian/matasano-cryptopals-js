@@ -1,4 +1,4 @@
-# matasano-cryptopals-js
+# matasano-cryptopals-ts
 
 This repository contains my naive (sometimes maybe even wrong) solutions to the Matasano Cryptopals Challenges written in node.js (even though the original authors of the challenges probably hate this idea).  
 
